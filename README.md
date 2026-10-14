@@ -1,8 +1,5 @@
 # 8051-Microcontroller
-8051 microcontroller and Embedded C practice tasks, covering GPIO, timers, interrupts, LCDs, keypads, sensors, and hardware interfacing.
 
-
-# 8051 Microcontroller 
 
 A collection of 8051 microcontroller exercises and Embedded C programs focused on learning microcontroller programming, peripheral interfacing, and embedded systems development.
 
