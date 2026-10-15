@@ -99,6 +99,8 @@ Each task is stored in a separate folder, organized as follows:
 
 ## Getting Started
 
+# Open the Internship Manual Folder
+
 To run any task:
 1. Navigate to the corresponding folder.
 2. Use the Keil IDE or your preferred toolchain to compile and upload the code to the STC89C52 microcontroller.
