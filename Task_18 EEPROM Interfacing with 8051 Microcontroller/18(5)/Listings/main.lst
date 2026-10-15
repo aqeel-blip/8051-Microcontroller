@@ -1,0 +1,71 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              08/18/2026 16:35:44 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          #include "lcd.h"
+   3          #include "lcd1602.h"
+*** WARNING C318 IN LINE 3 OF main.c: can't open file 'lcd1602.h'
+   4          #include "i2c.h"
+   5          
+   6          sbit K1 = P3^1; // Push button K1
+   7          
+   8          #define EEPROM_START_ADDR 0x00
+   9          
+  10          static void DelayMs(unsigned int ms) {
+  11   1          unsigned int i, j;
+  12   1          for (i = ms; i > 0; i--)
+  13   1              for (j = 110; j > 0; j--);
+  14   1      }
+  15          
+  16          void main(void) {
+  17   1          unsigned long counter = 0;
+  18   1      
+  19   1          LCD_Init();
+  20   1          LCD_ShowString(1, 1, "EEPROM 32bit CNT");
+  21   1      
+  22   1          // Read stored 32-bit counter from EEPROM upon power-up/reset
+  23   1          counter = EEPROM_ReadCounter32(EEPROM_START_ADDR);
+  24   1          LCD_ShowNum(2, 1, counter, 10);
+  25   1      
+  26   1          while (1) {
+  27   2              // Detect button K1 press with debouncing
+  28   2              if (K1 == 0) {
+  29   3                  DelayMs(20); // Debounce
+  30   3                  if (K1 == 0) {
+  31   4                      counter++; // Increment 32-bit counter
+  32   4                      
+  33   4                      // Write modified counter back into 4 adjacent EEPROM bytes
+  34   4                      EEPROM_WriteCounter32(EEPROM_START_ADDR, counter);
+  35   4                      
+  36   4                      // Re-read back to verify EEPROM persistence
+  37   4                      counter = EEPROM_ReadCounter32(EEPROM_START_ADDR);
+  38   4                      LCD_ShowNum(2, 1, counter, 10);
+  39   4      
+  40   4                      while (K1 == 0); // Wait for key release
+  41   4                  }
+  42   3              }
+  43   2          }
+  44   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    172    ----
+   CONSTANT SIZE    =     17    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       4
+   IDATA SIZE       =   ----    ----
+C51 COMPILER V9.60.7.0   MAIN                                                              08/18/2026 16:35:44 PAGE 2   
+
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

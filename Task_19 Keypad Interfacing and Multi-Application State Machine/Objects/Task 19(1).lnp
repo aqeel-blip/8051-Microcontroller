@@ -1,0 +1,6 @@
+".\Objects\keypad.obj",
+".\Objects\keypad_1.obj",
+".\Objects\lcd.obj",
+".\Objects\main.obj" 
+TO ".\Objects\Task 19(1)" 
+PRINT(".\Listings\Task 19(1).m51") RAMSIZE(256) 

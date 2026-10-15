@@ -1,0 +1,3 @@
+".\Objects\Door lock.obj" 
+TO ".\Objects\Task 21 DOOR LOCK" 
+PRINT(".\Listings\Task 21 DOOR LOCK.m51") RAMSIZE(256) 

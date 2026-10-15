@@ -1,0 +1,35 @@
+#include <reg52.h>
+#include <intrins.h>
+
+sbit SERVO_PIN = P2^0; // Output pin connected to servo signal
+
+// Delay in ~10-microsecond increments (12 MHz Crystal)
+void delay_10us(unsigned int us_10) {
+    while (us_10--) {
+        _nop_();
+        _nop_();
+    }
+}
+
+// Delay in milliseconds (12 MHz Crystal)
+void delay_ms(unsigned int ms) {
+    unsigned int i, j;
+    for (i = ms; i > 0; i--) {
+        for (j = 112; j > 0; j--);
+    }
+}
+
+void main(void) {
+    SERVO_PIN = 0;
+
+    while (1) {
+        // --- 0 Degrees Signal: 0.5 ms HIGH, 19.5 ms LOW ---
+        
+        SERVO_PIN = 1;
+        delay_10us(34);      // 50 x 10 us = 500 us (0.5 ms HIGH)
+
+        SERVO_PIN = 0;
+        delay_ms(19);        // 19.0 ms LOW
+        delay_10us(50);      // + 0.5 ms LOW = 19.5 ms LOW total
+    }
+}

@@ -1,0 +1,179 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              09/22/2026 14:31:54 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          /************************************************************
+   2           * Task 6 - Software RTC (LCD line 1) vs DS1302 (LCD line 2) [Ultra-Compact]
+   3           * Board : STC89C52RC @ 11.0592 MHz
+   4           * LCD   : Data=P0  RS=P2.6  RW=P2.5  EN=P2.7   (16 x 2)
+   5           * DS1302: SCLK=P3.6  I/O=P3.4  CE=P3.5  (32.768 kHz on board)
+   6           * UART  : 9600 8N1
+   7           ************************************************************/
+   8          #include <reg51.h>
+   9          #include "lcd.h"
+  10          #include "ds1302.h"
+  11          
+  12          struct __time {
+  13              unsigned char hour, minute, second, day, month;
+  14              unsigned int year;
+  15          } sw_time = {0, 0, 0, 1, 1, 2026};
+  16          
+  17          volatile bit second_flag = 0, rx_ready = 0;
+  18          unsigned char timer_count = 0, rx_buf[20], rx_index = 0;
+  19          
+  20          /* ---------------- UART ---------------- */
+  21          void uart_init(void) {
+  22   1          TMOD = (TMOD & 0x0F) | 0x20;
+  23   1          TH1 = TL1 = 0xFD;
+  24   1          SCON = 0x50;
+  25   1          TR1 = ES = EA = 1;
+  26   1      }
+  27          
+  28          void uart_putc(char c) { SBUF = c; while (!TI); TI = 0; }
+  29          void uart_puts(char *s) { while (*s) uart_putc(*s++); }
+  30          void uart_2dig(unsigned char v) { uart_putc(v / 10 + '0'); uart_putc(v % 10 + '0'); }
+  31          
+  32          void uart_isr(void) interrupt 4 {
+  33   1          if (RI) {
+  34   2              RI = 0;
+  35   2              rx_buf[rx_index] = SBUF;
+  36   2              if (rx_buf[rx_index] == '\r' || rx_buf[rx_index] == '\n') {
+  37   3                  rx_buf[rx_index] = 0;
+  38   3                  if (rx_index) rx_ready = 1;
+  39   3                  rx_index = 0;
+  40   3              } else if (rx_index < sizeof(rx_buf) - 1) rx_index++;
+  41   2          }
+  42   1          if (TI) TI = 0;
+  43   1      }
+  44          
+  45          /* ---------------- software RTC helpers ---------------- */
+  46          unsigned char get_days_in_month(unsigned char m, unsigned int y) {
+  47   1          code const unsigned char dim[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+  48   1          if (m == 2 && ((y % 4 == 0 && y % 100 != 0) || (y % 400 == 0))) return 29;
+  49   1          return (m >= 1 && m <= 12) ? dim[m] : 31;
+  50   1      }
+  51          
+  52          void update_time_structure(void) {
+  53   1          if (++sw_time.second < 60) return; sw_time.second = 0;
+  54   1          if (++sw_time.minute < 60) return; sw_time.minute = 0;
+C51 COMPILER V9.60.7.0   MAIN                                                              09/22/2026 14:31:54 PAGE 2   
+
+  55   1          if (++sw_time.hour < 24) return;    sw_time.hour = 0;
+  56   1          if (++sw_time.day > get_days_in_month(sw_time.month, sw_time.year)) {
+  57   2              sw_time.day = 1;
+  58   2              if (++sw_time.month > 12) { sw_time.month = 1; sw_time.year++; }
+  59   2          }
+  60   1      }
+  61          
+  62          /* ---------------- LCD ---------------- */
+  63          void lcd_time(unsigned char h, unsigned char m, unsigned char s) {
+  64   1          lcd_write_2digit(h); lcd_write_data(':');
+  65   1          lcd_write_2digit(m); lcd_write_data(':');
+  66   1          lcd_write_2digit(s);
+  67   1      }
+  68          
+  69          void update_lcd(void) {
+  70   1          unsigned char h, m, s, d, mo, y;
+  71   1          ds1302_get_time(&h, &m, &s, &d, &mo, &y);
+  72   1          
+  73   1          lcd_set_cursor(0, 0); lcd_write_string("SW: ");
+  74   1          lcd_time(sw_time.hour, sw_time.minute, sw_time.second);
+  75   1          lcd_write_string("    ");
+  76   1      
+  77   1          lcd_set_cursor(1, 0);
+  78   1          if (h > 23 || m > 59 || s > 59) lcd_write_string("DS: --:--:--    ");
+  79   1          else { lcd_write_string("DS: "); lcd_time(h, m, s); lcd_write_string("    "); }
+  80   1      }
+  81          
+  82          /* ---------------- serial command ---------------- */
+  83          unsigned char handle_serial_command(unsigned char *s) {
+  84   1          unsigned char i;
+  85   1          if (s[0] == '?' && s[1] == 0) return 2;
+  86   1          for (i = 0; i < 14; i++) if (s[i] < '0' || s[i] > '9') return 0;
+  87   1      
+  88   1          #define D(idx) (s[idx] - '0')
+  89   1          sw_time.hour   = D(0)*10  + D(1);
+  90   1          sw_time.minute = D(2)*10  + D(3);
+  91   1          sw_time.second = D(4)*10  + D(5);
+  92   1          sw_time.day    = D(6)*10  + D(7);
+  93   1          sw_time.month  = D(8)*10  + D(9);
+  94   1          sw_time.year   = D(10)*1000 + D(11)*100 + D(12)*10 + D(13);
+  95   1          #undef D
+  96   1      
+  97   1          if (sw_time.hour > 23 || sw_time.minute > 59 || sw_time.second > 59 ||
+  98   1              sw_time.day < 1 || sw_time.day > get_days_in_month(sw_time.month, sw_time.year) ||
+  99   1              sw_time.month < 1 || sw_time.month > 12) return 0;
+ 100   1      
+ 101   1          ds1302_set_time(sw_time.hour, sw_time.minute, sw_time.second, 
+ 102   1                          sw_time.day,  sw_time.month,  (unsigned char)(sw_time.year % 100));
+ 103   1          return 1;
+ 104   1      }
+ 105          
+ 106          void answer_query(void) {
+ 107   1          unsigned char h, m, s, d, mo, y;
+ 108   1          ds1302_get_time(&h, &m, &s, &d, &mo, &y);
+ 109   1          uart_puts("?SW ");
+ 110   1          uart_2dig(sw_time.hour);   uart_putc(':'); uart_2dig(sw_time.minute); uart_putc(':'); uart_2dig(sw_tim
+             -e.second);
+ 111   1          uart_puts(" DS ");
+ 112   1          if (h > 23 || m > 59 || s > 59) uart_puts("--:--:--");
+ 113   1          else { uart_2dig(h); uart_putc(':'); uart_2dig(m); uart_putc(':'); uart_2dig(s); }
+ 114   1          uart_puts("\r\n");
+ 115   1      }
+C51 COMPILER V9.60.7.0   MAIN                                                              09/22/2026 14:31:54 PAGE 3   
+
+ 116          
+ 117          /* ---------------- Timer 0 ---------------- */
+ 118          void timer0_isr(void) interrupt 1 {
+ 119   1          TH0 = 0x4C; TL0 = 0x00;
+ 120   1          if (++timer_count >= 20) { timer_count = 0; second_flag = 1; }
+ 121   1      }
+ 122          
+ 123          void timer_init(void) {
+ 124   1          TMOD = (TMOD & 0xF0) | 0x01;
+ 125   1          TH0 = 0x4C; TL0 = 0x00;
+ 126   1          ET0 = TR0 = EA = 1;
+ 127   1      }
+ 128          
+ 129          /* ---------------- main ---------------- */
+ 130          void main(void) {
+ 131   1          unsigned char r;
+ 132   1          lcd_init(); lcd_write_string("SW RTC vs DS1302"); delay_ms(500); lcd_clear();
+ 133   1          ds1302_init(); timer_init(); uart_init(); update_lcd();
+ 134   1          uart_puts("Send HHMMSSDDMMYYYY + Enter\r\n");
+ 135   1      
+ 136   1          while (1) {
+ 137   2              if (rx_ready) {
+ 138   3                  rx_ready = 0;
+ 139   3                  r = handle_serial_command(rx_buf);
+ 140   3                  if      (r == 1) { update_lcd(); uart_puts("OK\r\n"); }
+ 141   3                  else if (r == 2) { answer_query(); }
+ 142   3                  else             { uart_puts("ERR\r\n"); }
+ 143   3              }
+ 144   2              if (second_flag) {
+ 145   3                  second_flag = 0;
+ 146   3                  update_time_structure();
+ 147   3                  update_lcd();
+ 148   3              }
+ 149   2          }
+ 150   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1169    ----
+   CONSTANT SIZE    =    125    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     29      21
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      2    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

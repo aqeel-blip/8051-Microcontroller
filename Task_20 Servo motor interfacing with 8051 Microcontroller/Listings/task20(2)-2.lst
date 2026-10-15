@@ -1,0 +1,94 @@
+C51 COMPILER V9.60.7.0   TASK20_2__2                                                       08/24/2026 12:47:04 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TASK20_2__2
+OBJECT MODULE PLACED IN .\Objects\task20(2)-2.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE task20(2)-2.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listin
+                    -gs\task20(2)-2.lst) TABS(2) OBJECT(.\Objects\task20(2)-2.obj)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          #include <intrins.h>  // Required for _nop_() precise delay
+   3          
+   4          sbit SERVO = P1^0;    // Servo Signal Pin
+   5          sbit K1    = P3^1;    // Button K1 Pin
+   6          
+   7          // Calibrated 100-microsecond delay loop (@ 11.0592 MHz)
+   8          void delay_100us(unsigned char t) {
+   9   1          unsigned char i, j;
+  10   1          while (t--) {
+  11   2              _nop_();
+  12   2              i = 2;
+  13   2              j = 38;
+  14   2              do {
+  15   3                  while (--j);
+  16   3              } while (--i);
+  17   2          }
+  18   1      }
+  19          
+  20          // Millisecond delay for button debouncing
+  21          void delay_ms(unsigned int ms) {
+  22   1          unsigned int i, j;
+  23   1          for (i = ms; i > 0; i--)
+  24   1              for (j = 110; j > 0; j--);
+  25   1      }
+  26          
+  27          void main(void) {
+  28   1          // Ticks in 100us units:
+  29   1          //  5 * 100us = 0.5ms (0°)
+  30   1          // 10 * 100us = 1.0ms (45°)
+  31   1          // 15 * 100us = 1.5ms (90°)
+  32   1          // 20 * 100us = 2.0ms (135°)
+  33   1          // 25 * 100us = 2.5ms (180°)
+  34   1          code unsigned char pulse_ticks[] = {5, 10, 15, 20, 25};
+  35   1          
+  36   1          unsigned char angle_index = 0;
+  37   1          unsigned char high_ticks = 5;
+  38   1          unsigned char low_ticks = 195; // 200 - 5 = 195 (Total 20ms period)
+  39   1      
+  40   1          while (1) {
+  41   2              // 1. HIGH Pulse
+  42   2              SERVO = 1;
+  43   2              delay_100us(high_ticks);
+  44   2      
+  45   2              // 2. LOW Pulse
+  46   2              SERVO = 0;
+  47   2              delay_100us(low_ticks);
+  48   2      
+  49   2              // 3. Non-blocking button check
+  50   2              if (K1 == 0) {
+  51   3                  delay_ms(15); // Debounce
+  52   3                  if (K1 == 0) {
+  53   4                      // Advance angle
+  54   4                      angle_index = (angle_index + 1) % 5;
+C51 COMPILER V9.60.7.0   TASK20_2__2                                                       08/24/2026 12:47:04 PAGE 2   
+
+  55   4                      high_ticks = pulse_ticks[angle_index];
+  56   4                      low_ticks = 200 - high_ticks; // Keep total cycle at 20ms (200 * 100us)
+  57   4      
+  58   4                      // Maintain PWM timing while button is held down
+  59   4                      while (K1 == 0) {
+  60   5                          SERVO = 1;
+  61   5                          delay_100us(high_ticks);
+  62   5                          SERVO = 0;
+  63   5                          delay_100us(low_ticks);
+  64   5                      }
+  65   4                  }
+  66   3              }
+  67   2          }
+  68   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    116    ----
+   CONSTANT SIZE    =      5    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

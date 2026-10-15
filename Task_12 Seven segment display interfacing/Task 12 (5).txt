@@ -1,0 +1,86 @@
+#include <reg52.h>
+
+// 74HC138 address pins connected to P2.2, P2.3, P2.4
+sbit LSA = P2^2;
+sbit LSB = P2^3;
+sbit LSC = P2^4;
+
+// Global index variable for keeping track of the current active display
+volatile unsigned char display_index = 0;
+
+// Function declarations
+void Timer0_Init(void);
+
+void main(void) {
+    // Initialize segment data on Port 0 (Displays digit '0')
+    P0 = 0x3F;
+
+    // Initialize Timer 0 and enable interrupts
+    Timer0_Init();
+
+    // Main loop remains completely free for other processing tasks
+    while (1) {
+        // Main program execution stays clear
+    }
+}
+
+/*
+ * Timer 0 Initialization & Refresh Rate Step-by-Step Calculations
+ * ====================================================================
+ * Goal: Achieve an overall display refresh rate (f_refresh) of 50 Hz.
+ * 
+ * Step 1: Calculate the full scanning cycle time (T_cycle)
+ *         T_cycle = 1 / f_refresh
+ *         T_cycle = 1 / 50 Hz = 0.02 s = 20 ms
+ * 
+ * Step 2: Calculate required Timer Interrupt Interval (T_interrupt)
+ *         Each display gets its turn after 8 timer interrupts.
+ *         T_interrupt = T_cycle / 8
+ *         T_interrupt = 20 ms / 8 = 2.5 ms (0.0025 s)
+ * 
+ * Step 3: Verify overall refresh rate from interrupt frequency
+ *         f_interrupt = 1 / T_interrupt = 1 / 0.0025 s = 400 Hz
+ *         f_refresh   = f_interrupt / 8 = 400 Hz / 8 = 50 Hz
+ * 
+ * Step 4: Calculate Timer Reload Values (12 MHz Crystal)
+ *         Clock tick time = 12 / 12 MHz = 1 us
+ *         Counts required for 2.5 ms = 2500 us / 1 us = 2500 counts
+ *         
+ *         Timer Mode: 16-bit Timer 0 Mode 1 (Max count = 65536)
+ *         Initial Timer Value = 65536 - 2500 = 63036
+ *         63036 in Hexadecimal = 0xF63C
+ *         
+ *         TH0 = 0xF6 (High Byte)
+ *         TL0 = 0x3C (Low Byte)
+ * ====================================================================
+ */
+void Timer0_Init(void) {
+    TMOD &= 0xF0; // Clear Timer 0 mode bits
+    TMOD |= 0x01; // Set Timer 0 to 16-bit Mode 1
+    
+    // Initial value for 2.5 ms interrupt @ 12 MHz crystal
+    TH0 = 0xF6;   
+    TL0 = 0x3C;
+    
+    ET0 = 1;      // Enable Timer 0 Interrupt
+    EA  = 1;      // Enable Global Interrupts
+    TR0 = 1;      // Start Timer 0
+}
+
+// Timer 0 ISR (Executes every 2.5 ms)
+void Timer0_ISR(void) interrupt 1 {
+    // Reload timer values for 2.5 ms delay
+    TH0 = 0xF6;
+    TL0 = 0x3C;
+
+    // Select the current 7-segment display (0 to 7) via 74HC138
+    LSA = (display_index & 0x01);        // Bit 0 -> P2.2
+    LSB = ((display_index >> 1) & 0x01); // Bit 1 -> P2.3
+    LSC = ((display_index >> 2) & 0x01); // Bit 2 -> P2.4
+
+    // Advance to the next display for the next interrupt cycle
+    display_index++;
+    if (display_index >= 8) {
+        display_index = 0;
+    }
+}

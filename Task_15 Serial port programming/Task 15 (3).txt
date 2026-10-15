@@ -1,0 +1,151 @@
+#include <reg52.h>
+
+#define MAX_LEN 16  // LCD1602 fits 16 characters per line
+
+// LCD Control Pins definitions for A2 Board
+sbit LCD_RS = P2^6;
+sbit LCD_WR = P2^5;
+sbit LCD_E  = P2^7;
+
+#define LCD_DATA P0
+
+// Global variables for UART buffer
+char rx_buffer[MAX_LEN + 1];
+unsigned char rx_index = 0;
+bit msg_received = 0;
+
+// --- Millisecond Delay ---
+void Delay_ms(unsigned int ms) {
+    unsigned int i, j;
+    for (i = 0; i < ms; i++)
+        for (j = 0; j < 120; j++);
+}
+
+// --- LCD1602 Low-Level Functions ---
+void LCD_Command(unsigned char cmd) {
+    LCD_RS = 0;         // Command mode
+    LCD_WR = 0;         // Write mode
+    LCD_DATA = cmd;     // Put command on Port 0
+    LCD_E = 1;          // Enable pulse
+    Delay_ms(2);
+    LCD_E = 0;
+}
+
+void LCD_Char(unsigned char dat) {
+    LCD_RS = 1;         // Data mode
+    LCD_WR = 0;         // Write mode
+    LCD_DATA = dat;     // Put character data on Port 0
+    LCD_E = 1;          // Enable pulse
+    Delay_ms(2);
+    LCD_E = 0;
+}
+
+void LCD_Init(void) {
+    LCD_Command(0x38);  // 8-bit mode, 2 lines, 5x7 font
+    LCD_Command(0x0C);  // Display ON, Cursor OFF
+    LCD_Command(0x06);  // Auto-increment cursor
+    LCD_Command(0x01);  // Clear screen
+    Delay_ms(5);
+}
+
+void LCD_String(char *str) {
+    while (*str) {
+        LCD_Char(*str++);
+    }
+}
+
+void LCD_SetCursor(unsigned char row, unsigned char col) {
+    if (row == 0)
+        LCD_Command(0x80 + col); // Row 0 start address
+    else if (row == 1)
+        LCD_Command(0xC0 + col); // Row 1 start address
+}
+
+void LCD_Clear(void) {
+    LCD_Command(0x01);
+    Delay_ms(2);
+}
+
+// --- UART Setup & ISR ---
+void UART_Init(void) {
+    SCON = 0x50;  // 8-bit UART, receive enabled
+    TMOD |= 0x20; // Timer 1, Mode 2 (8-bit auto-reload)
+    TH1  = 0xFD;  // 9600 Baud rate @ 11.0592 MHz
+    TL1  = 0xFD;
+    TR1  = 1;     // Start Timer 1
+    ES   = 1;     // Enable Serial Interrupt
+    EA   = 1;     // Enable Global Interrupt
+}
+
+void UART_SendChar(char ch) {
+    SBUF = ch;
+    while (TI == 0);
+    TI = 0;
+}
+
+void UART_SendString(char *str) {
+    while (*str) {
+        UART_SendChar(*str++);
+    }
+}
+
+// Interrupt Service Routine for incoming serial bytes
+void UART_ISR(void) interrupt 4 {
+    if (RI) {
+        char ch = SBUF;
+        RI = 0;
+        
+        if (!msg_received) {
+            // Ignore leading \n if it arrives right after previous message
+            if (rx_index == 0 && (ch == '\n' || ch == '\r')) {
+                return;
+            }
+            
+            // Check for termination marker (\n\r or \r\n or standalone \r / \n)
+            if (ch == '\r' || ch == '\n') {
+                rx_buffer[rx_index] = '\0'; // Terminate string
+                msg_received = 1;
+            } else {
+                rx_buffer[rx_index] = ch;
+                rx_index++;
+                
+                // Prevent buffer overflow (LCD line 1 limit)
+                if (rx_index >= MAX_LEN) {
+                    rx_buffer[MAX_LEN] = '\0';
+                    msg_received = 1;
+                }
+            }
+        }
+    }
+}
+
+// --- Main Program Loop ---
+void main(void) {
+    LCD_Init();
+    UART_Init();
+    
+    // Display initial banner on LCD
+    LCD_SetCursor(0, 0);
+    LCD_String("UART RX Ready...");
+    LCD_SetCursor(1, 0);
+    LCD_String("Send from PC:");
+
+    while (1) {
+        if (msg_received) {
+            // 1. Clear Line 2 on LCD and show received text
+            LCD_SetCursor(1, 0);
+            LCD_String("                "); // Clear line 2 with spaces
+            LCD_SetCursor(1, 0);
+            LCD_String(rx_buffer);        // Print new message on LCD
+
+            // 2. Echo confirmation message back to Hercules
+            UART_SendString("LCD Displayed: ");
+            UART_SendString(rx_buffer);
+            UART_SendString("\r\n");
+
+            // 3. Reset buffer for next incoming message
+            rx_index = 0;
+            msg_received = 0;
+        }
+    }
+}

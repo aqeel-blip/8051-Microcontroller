@@ -1,0 +1,178 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              09/23/2026 15:47:51 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SIZE) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main.
+                    -lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          /*
+   2           * Task 26: frequency counter (loopback) + LCD + 8-digit 7-seg
+   3           *
+   4           * Crystal: FOSC = 11059200UL (11.0592 MHz), 12T  — defined in Freq gene.h
+   5           *
+   6           * Jumper: P1.0 (J20 pin 8) ---> P3.2 / INT0 (J29 pin 6)
+   7           * LCD1602: D0-D7=P0, RS=P2.6, RW=P2.5, EN=P2.7
+   8           * 7-seg:   segments P0 (74HC245), digits P2.2/P2.3/P2.4 (74HC138)
+   9           *          LED8..LED5 = generated Hz,  LED4..LED1 = counted Hz
+  10           */
+  11          
+  12          #include <reg51.h>
+  13          #include "LCD.h"
+  14          #include "Freq gene.h"
+  15          #include "Freq coun.h"
+  16          
+  17          unsigned int gen_freq;
+  18          unsigned int cnt_freq;
+  19          bit cnt_err = 1;
+  20          bit cnt_ovf;
+  21          unsigned char lcd_hold;
+  22          
+  23          unsigned char seg_buf[8];
+  24          code unsigned char SEG_NUM[] = {
+  25              0x3F, 0x06, 0x5B, 0x4F, 0x66,
+  26              0x6D, 0x7D, 0x07, 0x7F, 0x6F
+  27          };
+  28          #define SEG_DASH  0x40
+  29          #define SEG_BLANK 0x00
+  30          
+  31          static void digits_to_seg(unsigned char lsd, unsigned int val, bit err) {
+  32   1          unsigned char i;
+  33   1      
+  34   1          if (err) {
+  35   2              for (i = 0; i < 4; i++)
+  36   2                  seg_buf[lsd + i] = SEG_DASH;
+  37   2              return;
+  38   2          }
+  39   1          for (i = 0; i < 4; i++) {
+  40   2              seg_buf[lsd + i] = SEG_NUM[val % 10];
+  41   2              val /= 10;
+  42   2          }
+  43   1      }
+  44          
+  45          static void refresh_seg_values(void) {
+  46   1          unsigned int g, c;
+  47   1      
+  48   1          g = gen_freq;
+  49   1          if (g > 9999) g = 9999;
+  50   1          digits_to_seg(4, g, 0);
+  51   1          c = cnt_freq;
+  52   1          if (!cnt_err && c > 9999) c = 9999;
+  53   1          digits_to_seg(0, c, cnt_err);
+  54   1      }
+C51 COMPILER V9.60.7.0   MAIN                                                              09/23/2026 15:47:51 PAGE 2   
+
+  55          
+  56          static void scan_seg(void) {
+  57   1          unsigned char i, d;
+  58   1      
+  59   1          for (i = 0; i < 8; i++) {
+  60   2              P0 = 0x00;
+  61   2              P2 = (P2 & 0xE3) | ((i & 0x07) << 2);
+  62   2              P0 = seg_buf[i];
+  63   2              for (d = 0; d < 80; d++);
+  64   2          }
+  65   1          P0 = 0x00;
+  66   1      }
+  67          
+  68          static unsigned char digits_of(unsigned int n) {
+  69   1          unsigned char k = 1;
+  70   1          while (n >= 10) {
+  71   2              n /= 10;
+  72   2              k++;
+  73   2          }
+  74   1          return k;
+  75   1      }
+  76          
+  77          static void lcd_show(void) {
+  78   1          unsigned char used;
+  79   1      
+  80   1          lcd_set_cursor(0, 0);
+  81   1          lcd_write_string("GEN:");
+  82   1          lcd_write_uint(gen_freq);
+  83   1          lcd_write_string("Hz");
+  84   1          used = 4 + digits_of(gen_freq) + 2;
+  85   1          lcd_pad_line(used);
+  86   1      
+  87   1          lcd_set_cursor(1, 0);
+  88   1          lcd_write_string("CNT:");
+  89   1          if (cnt_ovf) {
+  90   2              lcd_write_string("Error");
+  91   2              lcd_pad_line(9);
+  92   2          } else if (cnt_err) {
+  93   2              lcd_write_string("--------");
+  94   2              lcd_pad_line(12);
+  95   2          } else {
+  96   2              lcd_write_uint(cnt_freq);
+  97   2              lcd_write_string("Hz");
+  98   2              used = 4 + digits_of(cnt_freq) + 2;
+  99   2              lcd_pad_line(used);
+ 100   2          }
+ 101   1      }
+ 102          
+ 103          static void apply_measurement(void) {
+ 104   1          unsigned int hz;
+ 105   1          unsigned char st;
+ 106   1          bit paint;
+ 107   1      
+ 108   1          st = freq_count_poll(&hz);
+ 109   1          if (st == FREQ_NONE)
+ 110   1              return;
+ 111   1      
+ 112   1          paint = 0;
+ 113   1          if (st == FREQ_OVF) {
+ 114   2              cnt_err = 1;
+ 115   2              cnt_ovf = 1;
+ 116   2              paint = 1;
+C51 COMPILER V9.60.7.0   MAIN                                                              09/23/2026 15:47:51 PAGE 3   
+
+ 117   2          } else {
+ 118   2              cnt_freq = hz;
+ 119   2              cnt_err = 0;
+ 120   2              cnt_ovf = 0;
+ 121   2          }
+ 122   1          refresh_seg_values();
+ 123   1          lcd_hold++;
+ 124   1          if (paint || lcd_hold >= 200) {
+ 125   2              lcd_hold = 0;
+ 126   2              lcd_show();
+ 127   2          }
+ 128   1      }
+ 129          
+ 130          void main(void) {
+ 131   1          unsigned char i;
+ 132   1      
+ 133   1          TMOD = 0x00;
+ 134   1          freq_gen_init();
+ 135   1          freq_count_init();
+ 136   1          EA = 1;
+ 137   1      
+ 138   1          gen_freq = freq_gen_get_hz();
+ 139   1          for (i = 0; i < 8; i++)
+ 140   1              seg_buf[i] = SEG_BLANK;
+ 141   1      
+ 142   1          lcd_init();
+ 143   1          refresh_seg_values();
+ 144   1          lcd_show();
+ 145   1      
+ 146   1          while (1) {
+ 147   2              apply_measurement();
+ 148   2              scan_seg();
+ 149   2          }
+ 150   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    425    ----
+   CONSTANT SIZE    =     38    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     13       5
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      2       2
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

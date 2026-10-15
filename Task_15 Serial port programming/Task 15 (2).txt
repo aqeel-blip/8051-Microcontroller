@@ -1,0 +1,44 @@
+#include <reg52.h>
+
+// Function to initialize UART at 9600 baud rate
+void UART_Init(void) {
+    SCON = 0x50;  // 8-bit UART mode, receive enabled (Mode 1)
+    TMOD |= 0x20; // Timer 1, Mode 2 (8-bit auto-reload)
+    TH1  = 0xFD;  // Load value for 9600 baud rate @ 11.0592 MHz
+    TL1  = 0xFD;  
+    TR1  = 1;     // Start Timer 1
+    TI   = 1;     // Set Transmit Interrupt flag ready for printf/SBUF
+}
+
+// Function to send a single character over UART
+void UART_SendChar(char ch) {
+    SBUF = ch;             // Load character into Serial Buffer register
+    while (TI == 0);       // Wait until transmission completes
+    TI = 0;                // Clear transmission flag for next byte
+}
+
+// Function to send an entire text string
+void UART_SendString(char *str) {
+    while (*str != '\0') {
+        UART_SendChar(*str);
+        str++;
+    }
+}
+
+// Simple delay function
+void Delay_ms(unsigned int ms) {
+    unsigned int i, j;
+    for (i = 0; i < ms; i++)
+        for (j = 0; j < 120; j++);
+}
+
+void main(void) {
+    UART_Init(); // Setup UART hardware registers
+    
+    while (1) {
+        // \r moves cursor to column 0, \n moves to next line
+        UART_SendString("Hello world\r\n"); 
+        
+        Delay_ms(1000); // Send message once every second
+    }
+}

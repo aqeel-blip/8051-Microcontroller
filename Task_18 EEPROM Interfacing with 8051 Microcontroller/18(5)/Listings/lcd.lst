@@ -1,0 +1,90 @@
+C51 COMPILER V9.60.7.0   LCD                                                               08/18/2026 16:35:44 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE LCD
+OBJECT MODULE PLACED IN .\Objects\lcd.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE lcd.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\lcd.l
+                    -st) TABS(2) OBJECT(.\Objects\lcd.obj)
+
+line level    source
+
+   1          #include "lcd.h"
+   2          #include "lcd1602.h"
+*** WARNING C318 IN LINE 2 OF lcd.c: can't open file 'lcd1602.h'
+   3          
+   4          static void LCD_DelayMs(unsigned int ms) {
+   5   1          unsigned int i, j;
+   6   1          for (i = ms; i > 0; i--)
+   7   1              for (j = 110; j > 0; j--);
+   8   1      }
+   9          
+  10          void LCD_WriteCommand(unsigned char cmd) {
+  11   1          LCD_RS = 0;
+  12   1          LCD_RW = 0;
+  13   1          LCD_DATA_PORT = cmd;
+  14   1          LCD_EN = 1;
+  15   1          LCD_DelayMs(1);
+  16   1          LCD_EN = 0;
+  17   1      }
+  18          
+  19          void LCD_WriteData(unsigned char dat) {
+  20   1          LCD_RS = 1;
+  21   1          LCD_RW = 0;
+  22   1          LCD_DATA_PORT = dat;
+  23   1          LCD_EN = 1;
+  24   1          LCD_DelayMs(1);
+  25   1          LCD_EN = 0;
+  26   1      }
+  27          
+  28          void LCD_Init(void) {
+  29   1          LCD_DelayMs(15);
+  30   1          LCD_WriteCommand(0x38); // 8-bit mode, 2-line display, 5x7 font
+  31   1          LCD_WriteCommand(0x0C); // Display ON, Cursor OFF, Blink OFF
+  32   1          LCD_WriteCommand(0x06); // Auto-increment cursor
+  33   1          LCD_WriteCommand(0x01); // Clear display
+  34   1          LCD_DelayMs(5);
+  35   1      }
+  36          
+  37          void LCD_SetCursor(unsigned char row, unsigned char col) {
+  38   1          if (row == 1) {
+  39   2              LCD_WriteCommand(0x80 + (col - 1));
+  40   2          } else if (row == 2) {
+  41   2              LCD_WriteCommand(0xC0 + (col - 1));
+  42   2          }
+  43   1      }
+  44          
+  45          void LCD_ShowString(unsigned char row, unsigned char col, char *str) {
+  46   1          LCD_SetCursor(row, col);
+  47   1          while (*str) {
+  48   2              LCD_WriteData(*str++);
+  49   2          }
+  50   1      }
+  51          
+  52          void LCD_ShowNum(unsigned char row, unsigned char col, unsigned long num, unsigned char length) {
+  53   1          unsigned char i;
+C51 COMPILER V9.60.7.0   LCD                                                               08/18/2026 16:35:44 PAGE 2   
+
+  54   1          char buf[11];
+  55   1          
+  56   1          for (i = 0; i < length; i++) {
+  57   2              buf[length - 1 - i] = (num % 10) + '0';
+  58   2              num /= 10;
+  59   2          }
+  60   1          buf[length] = '\0';
+  61   1          
+  62   1          LCD_ShowString(row, col, buf);
+  63   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    248    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      22
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,32 @@
+C51 COMPILER V9.60.7.0   RTC                                                               08/19/2026 14:54:23 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE RTC
+OBJECT MODULE PLACED IN .\Objects\RTC.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE RTC.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\RTC.l
+                    -st) TABS(2) OBJECT(.\Objects\RTC.obj)
+
+line level    source
+
+   1          #ifndef TEMP_H
+   2          #define TEMP_H
+   3          
+   4          void display_num7_seg(unsigned char num);
+   5          void values_on_ssd(void);
+   6          unsigned int Temp_Read(void);
+   7          
+   8          #endif
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   ----    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,186 @@
+C51 COMPILER V9.60.7.0   TASK_4                                                            08/25/2026 12:42:21 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TASK_4
+OBJECT MODULE PLACED IN .\Objects\task 4.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE task 4.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\ta
+                    -sk 4.lst) TABS(2) OBJECT(.\Objects\task 4.obj)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          
+   3          // Hardware Pin Definitions
+   4          sbit SERVO_PIN = P1^0;  // PWM signal output to SG90
+   5          sbit K1        = P3^1;  // Button K1: Decrease angle
+   6          sbit K2        = P3^0;  // Button K2: Increase angle
+   7          
+   8          // Onboard LCD1602 Pins (Hardwired via PCB traces)[cite: 1]
+   9          sbit RS = P2^6;  //[cite: 1]
+  10          sbit RW = P2^5;  //[cite: 1]
+  11          sbit EN = P2^7;  //[cite: 1]
+  12          #define LCD_DATA P0  // Port 0 data bus[cite: 1]
+  13          
+  14          // Servo Control Variables
+  15          volatile unsigned char servo_position = 0; // Angle: 0 to 180 degrees
+  16          volatile bit pwm_state = 0;                // 0 = LOW state, 1 = HIGH state
+  17          
+  18          // Dynamic Reload Times in Microseconds (12 MHz Crystal: 1 cycle = 1 us)
+  19          volatile unsigned int high_us = 500;        // Initial HIGH width (500 us for 0 deg)
+  20          volatile unsigned int low_us  = 19500;      // Initial LOW width (20000 - 500 us)
+  21          
+  22          // Software Delay Function
+  23          void delay_ms(unsigned int ms) {
+  24   1          unsigned int i, j;
+  25   1          for(i = 0; i < ms; i++)
+  26   1              for(j = 0; j < 114; j++);
+  27   1      }
+  28          
+  29          // Fixed LCD Command Writer
+  30          void lcd_cmd(unsigned char cmd) {
+  31   1          RS = 0;
+  32   1          RW = 0;
+  33   1          LCD_DATA = cmd;
+  34   1          EN = 1;
+  35   1          delay_ms(1);
+  36   1          EN = 0;
+  37   1      }
+  38          
+  39          // Fixed LCD Data Writer
+  40          void lcd_data_write(unsigned char dat) {
+  41   1          RS = 1;
+  42   1          RW = 0;
+  43   1          LCD_DATA = dat;
+  44   1          EN = 1;
+  45   1          delay_ms(1);
+  46   1          EN = 0;
+  47   1      }
+  48          
+  49          void lcd_init(void) {
+  50   1          delay_ms(15);
+  51   1          lcd_cmd(0x38); // 8-bit mode, 2 lines, 5x7 matrix
+  52   1          lcd_cmd(0x0C); // Display ON, Cursor OFF
+  53   1          lcd_cmd(0x06); // Auto-increment entry mode
+  54   1          lcd_cmd(0x01); // Clear screen
+C51 COMPILER V9.60.7.0   TASK_4                                                            08/25/2026 12:42:21 PAGE 2   
+
+  55   1          delay_ms(2);
+  56   1      }
+  57          
+  58          void lcd_show_string(char *str) {
+  59   1          while(*str) {
+  60   2              lcd_data_write(*str++);
+  61   2          }
+  62   1      }
+  63          
+  64          void lcd_update_display(unsigned char angle) {
+  65   1          lcd_cmd(0x80); // Line 1
+  66   1          lcd_show_string("Servo Position ");
+  67   1          
+  68   1          lcd_cmd(0xC0); // Line 2
+  69   1          lcd_show_string("Angle: ");
+  70   1          lcd_data_write((angle / 100) + '0');        // Hundreds
+  71   1          lcd_data_write(((angle / 10) % 10) + '0');  // Tens
+  72   1          lcd_data_write((angle % 10) + '0');         // Units
+  73   1          lcd_data_write(0xDF);                       // Degree symbol
+  74   1          lcd_data_write(' ');
+  75   1      }
+  76          
+  77          // Optimized Variable-Reload Timer 0 ISR (Fires only TWICE per 20ms frame)
+  78          void timer0_isr(void) interrupt 1 {
+  79   1          unsigned int reload_val;
+  80   1          
+  81   1          if (pwm_state == 0) {
+  82   2              SERVO_PIN = 1;
+  83   2              pwm_state = 1;
+  84   2              reload_val = 65536 - high_us;
+  85   2          } else {
+  86   2              SERVO_PIN = 0;
+  87   2              pwm_state = 0;
+  88   2              reload_val = 65536 - low_us;
+  89   2          }
+  90   1          
+  91   1          TH0 = (unsigned char)(reload_val >> 8);
+  92   1          TL0 = (unsigned char)(reload_val & 0xFF);
+  93   1      }
+  94          
+  95          // Non-Blocking Key Scan Routine
+  96          void scan_keys(void) {
+  97   1          // Key K1: Decrease Angle
+  98   1          if (K1 == 0) {
+  99   2              delay_ms(20); // Debounce delay
+ 100   2              if (K1 == 0) {
+ 101   3                  if (servo_position > 0) {
+ 102   4                      servo_position--;
+ 103   4                      
+ 104   4                      // Recalculate HIGH time (500us + angle * 11.111us) and LOW time
+ 105   4                      high_us = 500 + (unsigned int)(servo_position * 11.111);
+ 106   4                      low_us  = 20000 - high_us;
+ 107   4                      
+ 108   4                      lcd_update_display(servo_position);
+ 109   4                  }
+ 110   3                  delay_ms(100); // Continuous hold speed delay
+ 111   3              }
+ 112   2          }
+ 113   1          
+ 114   1          // Key K2: Increase Angle
+ 115   1          if (K2 == 0) {
+ 116   2              delay_ms(20); // Debounce delay
+C51 COMPILER V9.60.7.0   TASK_4                                                            08/25/2026 12:42:21 PAGE 3   
+
+ 117   2              if (K2 == 0) {
+ 118   3                  if (servo_position < 180) {
+ 119   4                      servo_position++;
+ 120   4                      
+ 121   4                      // Recalculate HIGH time (500us + angle * 11.111us) and LOW time
+ 122   4                      high_us = 500 + (unsigned int)(servo_position * 11.111);
+ 123   4                      low_us  = 20000 - high_us;
+ 124   4                      
+ 125   4                      lcd_update_display(servo_position);
+ 126   4                  }
+ 127   3                  delay_ms(100); // Continuous hold speed delay
+ 128   3              }
+ 129   2          }
+ 130   1      }
+ 131          
+ 132          void main(void) {
+ 133   1          // Timer 0 Setup: Mode 1 (16-Bit Timer)
+ 134   1          TMOD &= 0xF0;
+ 135   1          TMOD |= 0x01;
+ 136   1          
+ 137   1          // Compute initial timing for 0 degrees
+ 138   1          high_us = 500 + (unsigned int)(servo_position * 11.111);
+ 139   1          low_us  = 20000 - high_us;
+ 140   1          
+ 141   1          SERVO_PIN = 1;
+ 142   1          pwm_state = 1;
+ 143   1          
+ 144   1          // Load initial 16-bit counter value for HIGH pulse duration
+ 145   1          TH0 = (unsigned char)((65536 - high_us) >> 8);
+ 146   1          TL0 = (unsigned char)((65536 - high_us) & 0xFF);
+ 147   1          
+ 148   1          ET0 = 1; // Enable Timer 0 Interrupt
+ 149   1          EA  = 1; // Enable Global Interrupts
+ 150   1          TR0 = 1; // Start Timer 0
+ 151   1          
+ 152   1          lcd_init();
+ 153   1          lcd_update_display(servo_position);
+ 154   1          
+ 155   1          while (1) {
+ 156   2              scan_keys();
+ 157   2          }
+ 158   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    544    ----
+   CONSTANT SIZE    =     24    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      5       4
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

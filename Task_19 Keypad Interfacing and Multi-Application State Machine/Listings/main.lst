@@ -1,0 +1,52 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              08/19/2026 09:58:36 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\..\..\Downloads\8051-Microcontroller-Training-Tasks-main\Task_19 Keyp
+                    -ad Interfacing and Multi-Application State Machine\Task 19_1 Keypad Interfacing\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OB
+                    -JECTEXTEND PRINT(.\Listings\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "LCD.h"
+   3          #include "KEYPAD_1.h"
+   4          #include "7_seg.h"
+*** WARNING C318 IN LINE 4 OF ..\..\..\Downloads\8051-Microcontroller-Training-Tasks-main\Task_19 Keypad Interfacing and
+             - Multi-Application State Machine\Task 19_1 Keypad Interfacing\main.c: can't open file '7_seg.h'
+   5          
+   6          
+   7          void main ()
+   8          { 
+   9   1         lcd_init();
+  10   1      
+  11   1        while(1)
+  12   1        {
+  13   2          lcd_command(0x80);
+  14   2          lcd_string("ENTER THE KEY");
+  15   2          lcd_command(0xC0);
+  16   2        keypad();
+*** WARNING C206 IN LINE 16 OF ..\..\..\Downloads\8051-Microcontroller-Training-Tasks-main\Task_19 Keypad Interfacing an
+             -d Multi-Application State Machine\Task 19_1 Keypad Interfacing\main.c: 'keypad': missing function-prototype
+  17   2        A=1; D=0; C=1;
+  18   2        keypad1();
+  19   2          
+  20   2            
+  21   2        }
+  22   1      }
+  23          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     36    ----
+   CONSTANT SIZE    =     14    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  2 WARNING(S),  0 ERROR(S)

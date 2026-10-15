@@ -1,0 +1,116 @@
+C51 COMPILER V9.60.7.0   DS1302                                                            08/20/2026 12:17:22 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE DS1302
+OBJECT MODULE PLACED IN .\Objects\ds1302.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ds1302.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\ds
+                    -1302.lst) TABS(2) OBJECT(.\Objects\ds1302.obj)
+
+line level    source
+
+   1          #include "ds1302.h"
+   2          
+   3          // Helper BCD Conversions
+   4          static unsigned char BCDToDec(unsigned char bcd) {
+   5   1          return ((bcd >> 4) * 10) + (bcd & 0x0F);
+   6   1      }
+   7          
+   8          static unsigned char DecToBCD(unsigned char dec) {
+   9   1          return ((dec / 10) << 4) | (dec % 10);
+  10   1      }
+  11          
+  12          // Low-level bit-bang write (LSB first)
+  13          static void DS1302_WriteByte(unsigned char dat) {
+  14   1          unsigned char i;
+  15   1          for (i = 0; i < 8; i++) {
+  16   2              DS1302_IO = dat & 0x01;
+  17   2              DS1302_SCLK = 1;
+  18   2              DS1302_SCLK = 0;
+  19   2              dat >>= 1;
+  20   2          }
+  21   1      }
+  22          
+  23          // Low-level bit-bang read (LSB first)
+  24          static unsigned char DS1302_ReadByte(void) {
+  25   1          unsigned char i, dat = 0;
+  26   1          for (i = 0; i < 8; i++) {
+  27   2              dat >>= 1;
+  28   2              if (DS1302_IO) {
+  29   3                  dat |= 0x80;
+  30   3              }
+  31   2              DS1302_SCLK = 1;
+  32   2              DS1302_SCLK = 0;
+  33   2          }
+  34   1          return dat;
+  35   1      }
+  36          
+  37          // Write command/data to DS1302 register
+  38          void DS1302_WriteReg(unsigned char cmd, unsigned char dat) {
+  39   1          DS1302_CE = 0;
+  40   1          DS1302_SCLK = 0;
+  41   1          DS1302_CE = 1;
+  42   1          DS1302_WriteByte(cmd);
+  43   1          DS1302_WriteByte(dat);
+  44   1          DS1302_CE = 0;
+  45   1      }
+  46          
+  47          // Read data from DS1302 register
+  48          unsigned char DS1302_ReadReg(unsigned char cmd) {
+  49   1          unsigned char dat;
+  50   1          DS1302_CE = 0;
+  51   1          DS1302_SCLK = 0;
+  52   1          DS1302_CE = 1;
+  53   1          DS1302_WriteByte(cmd);
+  54   1          dat = DS1302_ReadByte();
+C51 COMPILER V9.60.7.0   DS1302                                                            08/20/2026 12:17:22 PAGE 2   
+
+  55   1          DS1302_CE = 0;
+  56   1          return dat;
+  57   1      }
+  58          
+  59          // Initialize lines and clear Write Protect
+  60          void DS1302_Init(void) {
+  61   1          DS1302_CE = 0;
+  62   1          DS1302_SCLK = 0;
+  63   1          DS1302_WriteReg(DS1302_WP_WRITE, 0x00); // Disable write protection
+  64   1      }
+  65          
+  66          // Write complete time/date structure
+  67          void DS1302_SetTime(DS1302_Time *time) {
+  68   1          DS1302_WriteReg(DS1302_WP_WRITE, 0x00); // Disable write protection
+  69   1          
+  70   1          DS1302_WriteReg(DS1302_SEC_WRITE, DecToBCD(time->sec));
+  71   1          DS1302_WriteReg(DS1302_MIN_WRITE, DecToBCD(time->min));
+  72   1          DS1302_WriteReg(DS1302_HOUR_WRITE, DecToBCD(time->hour));
+  73   1          DS1302_WriteReg(DS1302_DATE_WRITE, DecToBCD(time->date));
+  74   1          DS1302_WriteReg(DS1302_MONTH_WRITE, DecToBCD(time->month));
+  75   1          DS1302_WriteReg(DS1302_DAY_WRITE, DecToBCD(time->day));
+  76   1          DS1302_WriteReg(DS1302_YEAR_WRITE, DecToBCD(time->year));
+  77   1          
+  78   1          DS1302_WriteReg(DS1302_WP_WRITE, 0x80); // Enable write protection
+  79   1      }
+  80          
+  81          // Read complete time/date structure
+  82          void DS1302_GetTime(DS1302_Time *time) {
+  83   1          time->sec   = BCDToDec(DS1302_ReadReg(DS1302_SEC_READ) & 0x7F);
+  84   1          time->min   = BCDToDec(DS1302_ReadReg(DS1302_MIN_READ) & 0x7F);
+  85   1          time->hour  = BCDToDec(DS1302_ReadReg(DS1302_HOUR_READ) & 0x3F);
+  86   1          time->date  = BCDToDec(DS1302_ReadReg(DS1302_DATE_READ) & 0x3F);
+  87   1          time->month = BCDToDec(DS1302_ReadReg(DS1302_MONTH_READ) & 0x1F);
+  88   1          time->day   = BCDToDec(DS1302_ReadReg(DS1302_DAY_READ) & 0x07);
+  89   1          time->year  = BCDToDec(DS1302_ReadReg(DS1302_YEAR_READ));
+  90   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    341    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

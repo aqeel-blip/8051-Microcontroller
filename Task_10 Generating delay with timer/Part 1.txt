@@ -1,0 +1,67 @@
+#include <REG52.H>
+
+// Software counter variables
+unsigned char cntr_100ms = 0;
+unsigned int cntr_1000ms = 0;
+
+// LED pin definitions mapped to Port 2
+sbit LED_D1 = P2^0;
+sbit LED_D2 = P2^1;
+sbit LED_D3 = P2^2;
+
+// Timer 0 Initialization Function (10 ms interrupt setup)
+void Timer0_Init(void)
+{
+    TMOD &= 0xF0;     // Clear Timer 0 mode bits
+    TMOD |= 0x01;     // Set Timer 0 to Mode 1 (16-bit timer)
+    
+    // 10 ms reload value for 12 MHz crystal clock (65536 - 10000 = 55536 -> 0xD8F0)
+    TH0 = 0xD8;       
+    TL0 = 0xF0;
+    
+    ET0 = 1;          // Enable Timer 0 Interrupt
+    EA = 1;           // Enable Global Interrupts
+    TR0 = 1;          // Start Timer 0
+}
+
+// Interrupt Service Routine (Executes every 10 ms)
+void ISR_timer0(void) interrupt 1
+{
+    // Reload Timer 0 registers for next 10 ms cycle
+    TH0 = 0xD8;
+    TL0 = 0xF0;
+    
+    // LED D1 toggles every 10 ms
+    LED_D1 = ~LED_D1;
+    
+    // Increment counters
+    cntr_100ms++;
+    cntr_1000ms++;
+    
+    // Check if 100 ms have passed (10 ms * 10 = 100 ms)
+    if (cntr_100ms >= 10)
+    {
+        LED_D2 = ~LED_D2;    // Toggle LED D2
+        cntr_100ms = 0;      // Reset 100 ms counter
+    }
+    
+    // Check if 1000 ms have passed (10 ms * 100 = 1000 ms)
+    if (cntr_1000ms >= 100)
+    {
+        LED_D3 = ~LED_D3;    // Toggle LED D3
+        cntr_1000ms = 0;     // Reset 1000 ms counter
+    }
+}
+
+void main(void)
+{
+    // Initialize Port 2 pins high (LEDs initial state OFF)
+    P2 = 0xFF;
+    
+    Timer0_Init();
+    
+    while (1)
+    {
+        // Main loop remains empty as all toggles happen inside the ISR
+    }
+}

@@ -1,0 +1,43 @@
+#include <reg52.h>
+
+// Pin definitions for 74HC138 3-to-8 decoder
+sbit LSA = P2^2;
+sbit LSB = P2^3;
+sbit LSC = P2^4;
+
+// 7-segment display lookup table (0-9)
+unsigned char code segTable[10] = {
+    0x3F, // 0
+    0x06, // 1
+    0x5B, // 2
+    0x4F, // 3
+    0x66, // 4
+    0x6D, // 5
+    0x7D, // 6
+    0x07, // 7
+    0x7F, // 8
+    0x6F  // 9
+};
+
+void delay_ms(unsigned int ms) {
+    unsigned int i, j;
+    for (i = 0; i < ms; i++) {
+        for (j = 0; j < 112; j++);
+    }
+}
+
+void main(void) {
+    unsigned char i = 0;
+
+    // Enable first digit display
+    LSA = 0;
+    LSB = 0;
+    LSC = 0;
+
+    while (1) {
+        for (i = 0; i < 10; i++) {
+            P0 = segTable[i];
+            delay_ms(500);
+        }
+    }
+}

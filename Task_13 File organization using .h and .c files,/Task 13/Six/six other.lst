@@ -1,0 +1,27 @@
+C51 COMPILER V9.60.7.0   SIX_OTHER                                                         08/13/2026 14:39:21 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE SIX_OTHER
+OBJECT MODULE PLACED IN .\Objects\six other.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE six other.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings
+                    -\six other.lst) TABS(2) OBJECT(.\Objects\six other.obj)
+
+line level    source
+
+   1          #include <stdio.h>
+   2          
+   3          int a = 10;   // Definition of a
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   ----    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

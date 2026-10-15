@@ -1,0 +1,31 @@
+#include <REG52.H>
+
+sbit LED1 = P2^0; // LED D1 active low on P2.0
+
+void Timer2_Init(void)
+{
+    T2CON = 0x00;     // 16-bit Auto-reload mode
+    RCAP2H = 0xD8;    // Set reload value for 10 ms interrupt (12 MHz)
+    RCAP2L = 0xF0;
+    TH2 = 0xD8;       // Initialize initial count
+    TL2 = 0xF0;
+    
+    ET2 = 1;          // Enable Timer 2 interrupt
+    EA = 1;           // Enable global interrupts
+    TR2 = 1;          // Start Timer 2
+}
+
+void Timer2_ISR(void) interrupt 5
+{
+    TF2 = 0;          // Clear Timer 2 flag
+    LED1 = ~LED1;     // Toggle LED D1 every 10 ms
+}
+
+void main(void)
+{
+    Timer2_Init();
+    while (1)
+    {
+        // Main loop remains free
+    }
+}

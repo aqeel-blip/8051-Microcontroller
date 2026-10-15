@@ -1,0 +1,117 @@
+C51 COMPILER V9.60.7.0   EEPROM                                                            08/18/2026 15:32:22 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE EEPROM
+OBJECT MODULE PLACED IN .\Objects\eeprom.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE eeprom.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\ee
+                    -prom.lst) TABS(2) OBJECT(.\Objects\eeprom.obj)
+
+line level    source
+
+   1          #include "eeprom.h"
+   2          #include <intrins.h>
+   3          
+   4          static void I2C_Delay(void) {
+   5   1          _nop_();
+   6   1          _nop_();
+   7   1          _nop_();
+   8   1          _nop_();
+   9   1      }
+  10          
+  11          void I2C_Start(void) {
+  12   1          SDA = 1;
+  13   1          SCL = 1;
+  14   1          I2C_Delay();
+  15   1          SDA = 0;
+  16   1          I2C_Delay();
+  17   1          SCL = 0;
+  18   1      }
+  19          
+  20          void I2C_Stop(void) {
+  21   1          SDA = 0;
+  22   1          SCL = 1;
+  23   1          I2C_Delay();
+  24   1          SDA = 1;
+  25   1          I2C_Delay();
+  26   1      }
+  27          
+  28          unsigned char I2C_SendByte(unsigned char dat) {
+  29   1          unsigned char i, ack;
+  30   1          for (i = 0; i < 8; i++) {
+  31   2              SDA = (dat & 0x80) ? 1 : 0;
+  32   2              dat <<= 1;
+  33   2              SCL = 1;
+  34   2              I2C_Delay();
+  35   2              SCL = 0;
+  36   2              I2C_Delay();
+  37   2          }
+  38   1          SDA = 1; // Release line for ACK
+  39   1          SCL = 1;
+  40   1          I2C_Delay();
+  41   1          ack = SDA;
+  42   1          SCL = 0;
+  43   1          return ack;
+  44   1      }
+  45          
+  46          unsigned char I2C_ReadByte(unsigned char ack) {
+  47   1          unsigned char i, dat = 0;
+  48   1          SDA = 1;
+  49   1          for (i = 0; i < 8; i++) {
+  50   2              dat <<= 1;
+  51   2              SCL = 1;
+  52   2              I2C_Delay();
+  53   2              if (SDA) dat |= 0x01;
+  54   2              SCL = 0;
+C51 COMPILER V9.60.7.0   EEPROM                                                            08/18/2026 15:32:22 PAGE 2   
+
+  55   2              I2C_Delay();
+  56   2          }
+  57   1          SDA = ack ? 0 : 1;
+  58   1          SCL = 1;
+  59   1          I2C_Delay();
+  60   1          SCL = 0;
+  61   1          SDA = 1;
+  62   1          return dat;
+  63   1      }
+  64          
+  65          void EEPROM_WriteByte(unsigned char addr, unsigned char dat) {
+  66   1          I2C_Start();
+  67   1          I2C_SendByte(EEPROM_ADDR);       // Device Write Address
+  68   1          I2C_SendByte(addr);              // Memory Word Address
+  69   1          I2C_SendByte(dat);               // Data byte
+  70   1          I2C_Stop();
+  71   1          
+  72   1          // Self-timed write cycle delay (max 5ms for 24C02)
+  73   1          {
+  74   2              unsigned int delay = 1000;
+  75   2              while(delay--);
+  76   2          }
+  77   1      }
+  78          
+  79          unsigned char EEPROM_ReadByte(unsigned char addr) {
+  80   1          unsigned char dat;
+  81   1          I2C_Start();
+  82   1          I2C_SendByte(EEPROM_ADDR);       // Dummy Write
+  83   1          I2C_SendByte(addr);              // Word Address
+  84   1          
+  85   1          I2C_Start();
+  86   1          I2C_SendByte(EEPROM_ADDR | 0x01);// Read command
+  87   1          dat = I2C_ReadByte(0);           // Read single byte with NACK
+  88   1          I2C_Stop();
+  89   1          
+  90   1          return dat;
+  91   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    201    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

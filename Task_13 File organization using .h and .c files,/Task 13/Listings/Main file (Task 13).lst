@@ -1,0 +1,47 @@
+C51 COMPILER V9.60.7.0   MAIN_FILE__TASK_13_                                               08/13/2026 11:49:51 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN_FILE__TASK_13_
+OBJECT MODULE PLACED IN .\Objects\Main file (Task 13).obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Main file (Task 13).c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(
+                    -.\Listings\Main file (Task 13).lst) TABS(2) OBJECT(.\Objects\Main file (Task 13).obj)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          #include "LCD.h"
+   3          
+   4          // Example LED pin definition (e.g., LED D1 connected to P2^0)
+   5          sbit LED1 = P2^0; 
+   6          
+   7          void turn_on_led(void) {
+   8   1          LED1 = 0;  // Active-low on typical 8051 boards
+   9   1      }
+  10          
+  11          void turn_off_led(void) {
+  12   1          LED1 = 1;  // High turns LED OFF
+  13   1      }
+  14          
+  15          void main(void) {
+  16   1          #if (LCD == 1)      // Preprocessor conditional check
+  17   1              turn_on_led();
+  18   1          #else
+                      turn_off_led();
+                  #endif
+  21   1      
+  22   1          while(1);
+  23   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     11    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

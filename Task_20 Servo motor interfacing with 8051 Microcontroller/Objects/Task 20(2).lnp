@@ -1,0 +1,4 @@
+".\Objects\main.obj",
+".\Objects\Led blinking.obj" 
+TO ".\Objects\Task 20(2)" 
+PRINT(".\Listings\Task 20(2).m51") RAMSIZE(256) 

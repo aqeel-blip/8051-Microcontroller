@@ -1,0 +1,69 @@
+#include <reg52.h>
+
+// 74HC138 address pins connected to P2.2, P2.3, P2.4
+sbit LSA = P2^2;
+sbit LSB = P2^3;
+sbit LSC = P2^4;
+
+// Global index variable for keeping track of the current active display
+volatile unsigned char display_index = 0;
+
+// Function declarations
+void Timer0_Init(void);
+
+void main(void) {
+    // Initialize segment data on Port 0 (Displays digit '0')
+    P0 = 0x3F;
+
+    // Initialize Timer 0 and enable interrupts
+    Timer0_Init();
+
+    // Main loop remains completely free for other processing tasks
+    while (1) {
+        // No CPU cycle-wasting delays here!
+    }
+}
+
+// Timer 0 Initialization for 10ms Interrupt
+void Timer0_Init(void) {
+    TMOD &= 0xF0; // Clear Timer 0 mode bits
+    TMOD |= 0x01; // Set Timer 0 to 16-bit Mode 1
+    
+    // Initial value for 10ms overflow @ 12MHz crystal (10000 counts)
+    // 65536 - 10000 = 55536 = 0xD8F0
+    TH0 = 0xD8;   
+    TL0 = 0xF0;
+    
+    ET0 = 1;      // Enable Timer 0 Interrupt
+    EA  = 1;      // Enable Global Interrupts
+    TR0 = 1;      // Start Timer 0
+}
+
+/*
+ * Timer 0 ISR (Executes every 10 ms)
+ * 
+ * Refresh Rate Calculation:
+ * 
+ * Full Scanning Cycle (T_cycle):
+ * Since there are 8 displays, one complete update cycle across all 8 displays takes:
+ * T_cycle = 8 * 10 ms = 80 ms = 0.08 s
+ * 
+ * Overall Display Refresh Rate (f_refresh):
+ * f_refresh = 1 / T_cycle = 1 / 0.08 s = 12.5 Hz
+ */
+void Timer0_ISR(void) interrupt 1 {
+    // Reload timer values for 10ms
+    TH0 = 0xD8;
+    TL0 = 0xF0;
+
+    // Select the current 7-segment display (0 to 7) via 74HC138
+    LSA = (display_index & 0x01);        // Bit 0 -> P2.2
+    LSB = ((display_index >> 1) & 0x01); // Bit 1 -> P2.3
+    LSC = ((display_index >> 2) & 0x01); // Bit 2 -> P2.4
+
+    // Advance to the next display for the next interrupt cycle
+    display_index++;
+    if (display_index >= 8) {
+        display_index = 0;
+    }
+}

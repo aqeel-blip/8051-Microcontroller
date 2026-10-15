@@ -1,0 +1,139 @@
+C51 COMPILER V9.60.7.0   I2C                                                               08/18/2026 16:32:59 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE I2C
+OBJECT MODULE PLACED IN .\Objects\i2c.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE i2c.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\i2c.l
+                    -st) TABS(2) OBJECT(.\Objects\i2c.obj)
+
+line level    source
+
+   1          #include "i2c.h"
+   2          
+   3          static void I2C_Delay(void) {
+   4   1          unsigned char i = 2;
+   5   1          while (i--);
+   6   1      }
+   7          
+   8          void I2C_Start(void) {
+   9   1          I2C_SDA = 1;
+  10   1          I2C_SCL = 1;
+  11   1          I2C_Delay();
+  12   1          I2C_SDA = 0;
+  13   1          I2C_Delay();
+  14   1          I2C_SCL = 0;
+  15   1      }
+  16          
+  17          void I2C_Stop(void) {
+  18   1          I2C_SDA = 0;
+  19   1          I2C_SCL = 1;
+  20   1          I2C_Delay();
+  21   1          I2C_SDA = 1;
+  22   1          I2C_Delay();
+  23   1      }
+  24          
+  25          void I2C_SendByte(unsigned char dat) {
+  26   1          unsigned char i;
+  27   1          for (i = 0; i < 8; i++) {
+  28   2              I2C_SDA = (dat & 0x80) ? 1 : 0;
+  29   2              dat <<= 1;
+  30   2              I2C_SCL = 1;
+  31   2              I2C_Delay();
+  32   2              I2C_SCL = 0;
+  33   2              I2C_Delay();
+  34   2          }
+  35   1          // Clock cycle for ACK bit
+  36   1          I2C_SDA = 1;
+  37   1          I2C_SCL = 1;
+  38   1          I2C_Delay();
+  39   1          I2C_SCL = 0;
+  40   1      }
+  41          
+  42          unsigned char I2C_ReadByte(unsigned char ack) {
+  43   1          unsigned char i, dat = 0;
+  44   1          I2C_SDA = 1;
+  45   1          for (i = 0; i < 8; i++) {
+  46   2              dat <<= 1;
+  47   2              I2C_SCL = 1;
+  48   2              I2C_Delay();
+  49   2              if (I2C_SDA) dat |= 0x01;
+  50   2              I2C_SCL = 0;
+  51   2              I2C_Delay();
+  52   2          }
+  53   1          // Send ACK / NACK
+  54   1          I2C_SDA = ack ? 0 : 1;
+C51 COMPILER V9.60.7.0   I2C                                                               08/18/2026 16:32:59 PAGE 2   
+
+  55   1          I2C_SCL = 1;
+  56   1          I2C_Delay();
+  57   1          I2C_SCL = 0;
+  58   1          I2C_SDA = 1;
+  59   1          
+  60   1          return dat;
+  61   1      }
+  62          
+  63          void EEPROM_WriteByte(unsigned char addr, unsigned char dat) {
+  64   1          I2C_Start();
+  65   1          I2C_SendByte(0xA0); // AT24C02 Write Device Address
+  66   1          I2C_SendByte(addr); // Target Memory Address
+  67   1          I2C_SendByte(dat);  // Byte to Write
+  68   1          I2C_Stop();
+  69   1          
+  70   1          // Internal write cycle delay (~5ms required for AT24C02)
+  71   1          {
+  72   2              unsigned int i, j;
+  73   2              for (i = 5; i > 0; i--)
+  74   2                  for (j = 110; j > 0; j--);
+  75   2          }
+  76   1      }
+  77          
+  78          unsigned char EEPROM_ReadByte(unsigned char addr) {
+  79   1          unsigned char dat;
+  80   1          I2C_Start();
+  81   1          I2C_SendByte(0xA0); // Dummy Write command
+  82   1          I2C_SendByte(addr); // Memory Address to read
+  83   1          I2C_Start();
+  84   1          I2C_SendByte(0xA1); // Read Command
+  85   1          dat = I2C_ReadByte(0); // NACK to terminate read
+  86   1          I2C_Stop();
+  87   1          return dat;
+  88   1      }
+  89          
+  90          // Write 4-byte (32-bit) counter to 4 adjacent locations using Shift and & operators
+  91          void EEPROM_WriteCounter32(unsigned char startAddr, unsigned long counter) {
+  92   1          unsigned char b0 = (unsigned char)(counter & 0xFF);
+  93   1          unsigned char b1 = (unsigned char)((counter >> 8) & 0xFF);
+  94   1          unsigned char b2 = (unsigned char)((counter >> 16) & 0xFF);
+  95   1          unsigned char b3 = (unsigned char)((counter >> 24) & 0xFF);
+  96   1      
+  97   1          EEPROM_WriteByte(startAddr + 0, b0);
+  98   1          EEPROM_WriteByte(startAddr + 1, b1);
+  99   1          EEPROM_WriteByte(startAddr + 2, b2);
+ 100   1          EEPROM_WriteByte(startAddr + 3, b3);
+ 101   1      }
+ 102          
+ 103          // Read 4 adjacent locations and assemble into 32-bit value using Shift and | operators
+ 104          unsigned long EEPROM_ReadCounter32(unsigned char startAddr) {
+ 105   1          unsigned long b0 = EEPROM_ReadByte(startAddr + 0);
+ 106   1          unsigned long b1 = EEPROM_ReadByte(startAddr + 1);
+ 107   1          unsigned long b2 = EEPROM_ReadByte(startAddr + 2);
+ 108   1          unsigned long b3 = EEPROM_ReadByte(startAddr + 3);
+ 109   1      
+ 110   1          return (b0) | (b1 << 8) | (b2 << 16) | (b3 << 24);
+ 111   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    491    ----
+   CONSTANT SIZE    =   ----    ----
+C51 COMPILER V9.60.7.0   I2C                                                               08/18/2026 16:32:59 PAGE 3   
+
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      28
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

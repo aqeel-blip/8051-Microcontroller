@@ -1,0 +1,252 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              09/22/2026 10:01:04 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          /************************************************************
+   2           * Task 5 - Software RTC with PC time-setting over Serial
+   3           * Board : STC89C52 @ 11.0592 MHz (see note below if 12 MHz)
+   4           * LCD   : Data=P0, RS=P2.6, RW=P2.5, EN=P2.7
+   5           * UART  : P3.0(RXD), P3.1(TXD) via CH340 USB-TTL
+   6           *
+   7           * PC -> MCU command format (14 digits + Enter):
+   8           *   HHMMSSDDMMYYYY
+   9           *   e.g.  11262418092026<CR>   = 11:26:24 18/09/2026
+  10           * Other commands:
+  11           *   ?<CR>  -> MCU replies with current time
+  12           ************************************************************/
+  13          #include <reg51.h>
+  14          #include "lcd.h"
+  15          
+  16          struct __time {
+  17              unsigned int hour;
+  18              unsigned int minute;
+  19              unsigned int second;
+  20              unsigned int day;
+  21              unsigned int month;
+  22              unsigned int year;
+  23          };
+  24          
+  25          struct __time current_time = {10, 5, 30, 22, 9, 2026};
+  26          
+  27          volatile bit second_flag = 0;
+  28          unsigned int timer_count = 0;
+  29          
+  30          /* ---------------- UART variables ---------------- */
+  31          volatile bit  rx_ready = 0;                 // a full command line arrived
+  32          unsigned char rx_buf[20];
+  33          unsigned char rx_index = 0;
+  34          
+  35          /* ---------------- UART driver ---------------- */
+  36          void uart_init(void) {
+  37   1          TMOD &= 0x0F;           // clear Timer1 field
+  38   1          TMOD |= 0x20;           // Timer1, Mode 2 (8-bit auto reload)
+  39   1          TH1  = 0xFD;            // 9600 baud @ 11.0592 MHz
+  40   1          TL1  = 0xFD;            // NOTE: if your crystal is 12.000 MHz use
+  41   1                                  //       TH1=TL1=0xF3 and 2400 baud instead!
+  42   1          SCON = 0x50;            // UART mode 1, REN=1
+  43   1          TR1  = 1;
+  44   1          ES   = 1;               // enable UART interrupt
+  45   1          EA   = 1;
+  46   1      }
+  47          
+  48          void uart_putc(char c) {
+  49   1          SBUF = c;
+  50   1          while (TI == 0);
+  51   1          TI = 0;
+  52   1      }
+  53          
+  54          void uart_puts(char *s) {
+C51 COMPILER V9.60.7.0   MAIN                                                              09/22/2026 10:01:04 PAGE 2   
+
+  55   1          while (*s) uart_putc(*s++);
+  56   1      }
+  57          
+  58          void uart_isr(void) interrupt 4 {
+  59   1          if (RI) {
+  60   2              RI = 0;
+  61   2              rx_buf[rx_index] = SBUF;
+  62   2              if (rx_buf[rx_index] == '\r' || rx_buf[rx_index] == '\n') {
+  63   3                  rx_buf[rx_index] = 0;           // terminate string
+  64   3                  if (rx_index > 0) rx_ready = 1;
+  65   3                  rx_index = 0;
+  66   3              } else {
+  67   3                  if (rx_index < sizeof(rx_buf) - 1) rx_index++;
+  68   3              }
+  69   2          }
+  70   1          if (TI) TI = 0;
+  71   1      }
+  72          
+  73          /* ---------------- command parser ---------------- */
+  74          /* expects exactly 14 digits: HHMMSSDDMMYYYY            */
+  75          bit parse_and_set_time(unsigned char *s) {
+  76   1          unsigned char i;
+  77   1          unsigned char v[14];
+  78   1      
+  79   1          for (i = 0; i < 14; i++)
+  80   1              if (s[i] < '0' || s[i] > '9') return 0;
+  81   1      
+  82   1          for (i = 0; i < 14; i++) v[i] = s[i] - '0';
+  83   1      
+  84   1          current_time.hour   = v[0]*10 + v[1];
+  85   1          current_time.minute = v[2]*10 + v[3];
+  86   1          current_time.second = v[4]*10 + v[5];
+  87   1          current_time.day    = v[6]*10 + v[7];
+  88   1          current_time.month  = v[8]*10 + v[9];
+  89   1          current_time.year   = v[10]*1000 + v[11]*100 + v[12]*10 + v[13];
+  90   1      
+  91   1          if (current_time.hour > 23 || current_time.minute > 59 ||
+  92   1              current_time.second > 59 || current_time.day < 1   ||
+  93   1              current_time.day > 31  || current_time.month < 1   ||
+  94   1              current_time.month > 12) return 0;
+  95   1      
+  96   1          return 1;
+  97   1      }
+  98          
+  99          void send_current_time(void) {
+ 100   1          uart_putc('T'); uart_putc('=');
+ 101   1          uart_putc(current_time.hour/10 + '0');   uart_putc(current_time.hour%10 + '0');
+ 102   1          uart_putc(':');
+ 103   1          uart_putc(current_time.minute/10 + '0'); uart_putc(current_time.minute%10 + '0');
+ 104   1          uart_putc(':');
+ 105   1          uart_putc(current_time.second/10 + '0'); uart_putc(current_time.second%10 + '0');
+ 106   1          uart_putc(' ');
+ 107   1          uart_putc(current_time.day/10 + '0');    uart_putc(current_time.day%10 + '0');
+ 108   1          uart_putc('/');
+ 109   1          uart_putc(current_time.month/10 + '0');  uart_putc(current_time.month%10 + '0');
+ 110   1          uart_putc('/');
+ 111   1          uart_putc(current_time.year/1000 + '0'); uart_putc((current_time.year/100)%10 + '0');
+ 112   1          uart_putc((current_time.year/10)%10 + '0'); uart_putc(current_time.year%10 + '0');
+ 113   1          uart_putc('\r'); uart_putc('\n');
+ 114   1      }
+ 115          
+ 116          /* ---------------- RTC helpers ---------------- */
+C51 COMPILER V9.60.7.0   MAIN                                                              09/22/2026 10:01:04 PAGE 3   
+
+ 117          unsigned char is_leap_year(unsigned int year) {
+ 118   1          if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) return 1;
+ 119   1          return 0;
+ 120   1      }
+ 121          
+ 122          unsigned char get_days_in_month(unsigned int month, unsigned int year) {
+ 123   1          if (month == 2) return is_leap_year(year) ? 29 : 28;
+ 124   1          if (month == 4 || month == 6 || month == 9 || month == 11) return 30;
+ 125   1          return 31;
+ 126   1      }
+ 127          
+ 128          void update_time_structure(void) {
+ 129   1          current_time.second++;
+ 130   1          if (current_time.second >= 60) {
+ 131   2              current_time.second = 0;
+ 132   2              current_time.minute++;
+ 133   2              if (current_time.minute >= 60) {
+ 134   3                  current_time.minute = 0;
+ 135   3                  current_time.hour++;
+ 136   3                  if (current_time.hour >= 24) {
+ 137   4                      current_time.hour = 0;
+ 138   4                      current_time.day++;
+ 139   4                      if (current_time.day > get_days_in_month(current_time.month, current_time.year)) {
+ 140   5                          current_time.day = 1;
+ 141   5                          current_time.month++;
+ 142   5                          if (current_time.month > 12) {
+ 143   6                              current_time.month = 1;
+ 144   6                              current_time.year++;
+ 145   6                          }
+ 146   5                      }
+ 147   4                  }
+ 148   3              }
+ 149   2          }
+ 150   1      }
+ 151          
+ 152          void update_lcd(void) {
+ 153   1          lcd_set_cursor(0, 0);
+ 154   1          lcd_write_string("Time: ");
+ 155   1          lcd_write_2digit(current_time.hour);
+ 156   1          lcd_write_data(':');
+ 157   1          lcd_write_2digit(current_time.minute);
+ 158   1          lcd_write_data(':');
+ 159   1          lcd_write_2digit(current_time.second);
+ 160   1      
+ 161   1          lcd_set_cursor(1, 0);
+ 162   1          lcd_write_string("Date: ");
+ 163   1          lcd_write_2digit(current_time.day);
+ 164   1          lcd_write_data('/');
+ 165   1          lcd_write_2digit(current_time.month);
+ 166   1          lcd_write_data('/');
+ 167   1          lcd_write_4digit(current_time.year);
+ 168   1      }
+ 169          
+ 170          /* ---------------- Timer 0 : 1 second tick ---------------- */
+ 171          void timer0_isr(void) interrupt 1 {
+ 172   1          TH0 = 0x3C;                 // 50 ms @ 12 MHz (1 us machine cycle)
+ 173   1          TL0 = 0xB0;
+ 174   1          timer_count++;
+ 175   1          if (timer_count >= 20) {    // 20 x 50 ms = 1 s
+ 176   2              timer_count = 0;
+ 177   2              second_flag = 1;
+ 178   2          }
+C51 COMPILER V9.60.7.0   MAIN                                                              09/22/2026 10:01:04 PAGE 4   
+
+ 179   1      }
+ 180          
+ 181          void timer_init(void) {
+ 182   1          TMOD &= 0xF0;
+ 183   1          TMOD |= 0x01;               // Timer0 Mode1 16-bit
+ 184   1          TH0 = 0x3C;
+ 185   1          TL0 = 0xB0;
+ 186   1          ET0 = 1;
+ 187   1          EA  = 1;
+ 188   1          TR0 = 1;
+ 189   1      }
+ 190          
+ 191          /* ---------------- main ---------------- */
+ 192          void main(void) {
+ 193   1          lcd_init();
+ 194   1          lcd_write_string("RTC + SERIAL");
+ 195   1          delay_ms(1000);
+ 196   1          lcd_clear();
+ 197   1      
+ 198   1          update_lcd();
+ 199   1          timer_init();
+ 200   1          uart_init();
+ 201   1          uart_puts("Ready. Send HHMMSSDDMMYYYY + Enter\r\n");
+ 202   1      
+ 203   1          while (1) {
+ 204   2              if (rx_ready) {
+ 205   3                  rx_ready = 0;
+ 206   3                  if (rx_buf[0] == '?') {
+ 207   4                      send_current_time();
+ 208   4                  } else if (parse_and_set_time(rx_buf)) {
+ 209   4                      update_lcd();
+ 210   4                      uart_puts("OK\r\n");
+ 211   4                  } else {
+ 212   4                      uart_puts("ERR - use HHMMSSDDMMYYYY\r\n");
+ 213   4                  }
+ 214   3              }
+ 215   2      
+ 216   2              if (second_flag) {
+ 217   3                  second_flag = 0;
+ 218   3                  update_time_structure();
+ 219   3                  update_lcd();
+ 220   3              }
+ 221   2          }
+ 222   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1137    ----
+   CONSTANT SIZE    =     96    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     35      20
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      2    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

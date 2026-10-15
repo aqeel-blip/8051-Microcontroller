@@ -1,0 +1,152 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    08/24/2026  12:47:04  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\task20(2)-2.obj TO .\Objects\Task 20(2)-2 PRINT (.\Listings\Task 20(2)-2.m51) RAMS
+>> IZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\task20(2)-2.obj (TASK20_2__2)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?UIDIV)
+
+
+LINK MAP OF MODULE:  .\Objects\Task 20(2)-2 (TASK20_2__2)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     07FDH                  *** GAP ***
+            CODE    0800H     0055H     UNIT         ?C?LIB_CODE
+            CODE    0855H     0039H     UNIT         ?PR?MAIN?TASK20_2__2
+            CODE    088EH     001EH     UNIT         ?PR?_DELAY_MS?TASK20_2__2
+            CODE    08ACH     001DH     UNIT         ?PR?_DELAY_100US?TASK20_2__2
+            CODE    08C9H     000CH     UNIT         ?C_C51STARTUP
+            CODE    08D5H     0005H     UNIT         ?CO?TASK20_2__2
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\Task 20(2)-2 (TASK20_2__2)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?TASK20_2__2
+
+?PR?MAIN?TASK20_2__2
+  +--> ?PR?_DELAY_100US?TASK20_2__2
+  +--> ?PR?_DELAY_MS?TASK20_2__2
+  +--> ?CO?TASK20_2__2
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\Task 20(2)-2 (TASK20_2__2)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        TASK20_2__2
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/24/2026  12:47:04  PAGE 2
+
+
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  D:00B0H         PUBLIC        P3
+  D:00A8H         PUBLIC        IE
+  B:0090H.0       PUBLIC        SERVO
+  D:00B8H         PUBLIC        IP
+  C:0855H         PUBLIC        main
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  C:088EH         PUBLIC        _delay_ms
+  D:00C8H         PUBLIC        T2CON
+  C:08B7H         PUBLIC        _delay_100us
+  D:00D0H         PUBLIC        PSW
+  B:00B0H.1       PUBLIC        K1
+  -------         PROC          L?0025
+  -------         ENDPROC       L?0025
+  -------         PROC          _DELAY_100US
+  D:0007H         SYMBOL        t
+  -------         DO            
+  D:0006H         SYMBOL        i
+  D:0005H         SYMBOL        j
+  -------         ENDDO         
+  C:08B7H         LINE#         8
+  C:08B7H         LINE#         10
+  C:08BDH         LINE#         11
+  C:08BEH         LINE#         12
+  C:08C0H         LINE#         13
+  C:08C2H         LINE#         14
+  C:08C2H         LINE#         15
+  C:08C4H         LINE#         16
+  C:08C6H         LINE#         17
+  C:08C8H         LINE#         18
+  -------         ENDPROC       _DELAY_100US
+  -------         PROC          _DELAY_MS
+  D:0006H         SYMBOL        ms
+  -------         DO            
+  D:0006H         SYMBOL        i
+  D:0004H         SYMBOL        j
+  -------         ENDDO         
+  C:088EH         LINE#         21
+  C:088EH         LINE#         23
+  C:0897H         LINE#         24
+  C:08ABH         LINE#         25
+  -------         ENDPROC       _DELAY_MS
+  -------         PROC          MAIN
+  -------         DO            
+  C:08D5H         SYMBOL        pulse_ticks
+  D:0001H         SYMBOL        angle_index
+  D:0003H         SYMBOL        high_ticks
+  D:0002H         SYMBOL        low_ticks
+  -------         ENDDO         
+  C:0855H         LINE#         27
+  C:0855H         LINE#         36
+  C:0857H         LINE#         37
+  C:0859H         LINE#         38
+  C:085BH         LINE#         40
+  C:085BH         LINE#         42
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/24/2026  12:47:04  PAGE 3
+
+
+  C:085BH         LINE#         43
+  C:085BH         LINE#         46
+  C:085BH         LINE#         47
+  C:085EH         LINE#         50
+  C:0861H         LINE#         51
+  C:0868H         LINE#         52
+  C:086BH         LINE#         54
+  C:087BH         LINE#         55
+  C:0881H         LINE#         56
+  C:0886H         LINE#         59
+  C:0889H         LINE#         60
+  C:0889H         LINE#         61
+  C:0889H         LINE#         62
+  C:0889H         LINE#         63
+  C:088CH         LINE#         64
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        TASK20_2__2
+
+  -------         MODULE        ?C?UIDIV
+  C:0800H         PUBLIC        ?C?UIDIV
+  -------         ENDMOD        ?C?UIDIV
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0079H BYTE ( 5%) *
+******************************************************************************
+
+Program Size: data=9.0 xdata=0 code=221
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

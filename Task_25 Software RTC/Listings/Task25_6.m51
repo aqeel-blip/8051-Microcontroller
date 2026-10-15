@@ -1,0 +1,1867 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    09/22/2026  14:32:00  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\main.obj, .\Objects\ds1302.obj, .\Objects\lcd.obj TO .\Objects\Task25_6 PRINT (.\L
+>> istings\Task25_6.m51) RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\main.obj (MAIN)
+  .\Objects\ds1302.obj (DS1302)
+  .\Objects\lcd.obj (LCD)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?CLDPTR)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?CLDOPTR)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?IMUL)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?UIDIV)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\Task25_6 (MAIN)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     000AH     UNIT         _DATA_GROUP_
+            DATA    0012H     0006H     UNIT         ?DT?UPDATE_LCD?DS1302
+            DATA    0018H     0006H     UNIT         ?DT?ANSWER_QUERY?DS1302
+            DATA    001EH     0002H     UNIT         ?DT?_LCD_TIME?DS1302
+            BIT     0020H.0   0000H.2   UNIT         ?BI?MAIN
+            BIT     0020H.2   0000H.2   UNIT         ?BI?DS1302
+                    0020H.4   0000H.4                *** GAP ***
+            DATA    0021H     001DH     UNIT         ?DT?MAIN
+            DATA    003EH     001DH     UNIT         ?DT?DS1302
+            DATA    005BH     0003H     UNIT         ?DT?_UART_PUTS?DS1302
+            DATA    005EH     0003H     UNIT         ?DT?_HANDLE_SERIAL_COMMAND?DS1302
+            DATA    0061H     0002H     UNIT         ?DT?_LCD_WRITE_4DIGIT?LCD
+            DATA    0063H     0001H     UNIT         ?DT?MAIN?DS1302
+            IDATA   0064H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     0008H                  *** GAP ***
+            CODE    000BH     0003H     ABSOLUTE     
+* OVERLAP * CODE    000BH     0003H     ABSOLUTE     
+                    000EH     0015H                  *** GAP ***
+            CODE    0023H     0003H     ABSOLUTE     
+* OVERLAP * CODE    0023H     0003H     ABSOLUTE     
+                    0026H     07DAH                  *** GAP ***
+            CODE    0800H     0170H     UNIT         ?PR?_HANDLE_SERIAL_COMMAND?MAIN
+            CODE    0970H     0170H     UNIT         ?PR?_HANDLE_SERIAL_COMMAND?DS1302
+            CODE    0AE0H     00ADH     UNIT         ?C?LIB_CODE
+            CODE    0B8DH     0095H     UNIT         ?PR?UPDATE_LCD?MAIN
+            CODE    0C22H     0095H     UNIT         ?PR?UPDATE_LCD?DS1302
+            CODE    0CB7H     008DH     UNIT         ?PR?ANSWER_QUERY?MAIN
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 2
+
+
+            CODE    0D44H     008DH     UNIT         ?PR?ANSWER_QUERY?DS1302
+            CODE    0DD1H     008CH     UNIT         ?C_C51STARTUP
+            CODE    0E5DH     007DH     UNIT         ?CO?MAIN
+            CODE    0EDAH     007DH     UNIT         ?CO?DS1302
+            CODE    0F57H     006BH     UNIT         ?PR?MAIN?MAIN
+            CODE    0FC2H     006BH     UNIT         ?PR?MAIN?DS1302
+            CODE    102DH     004EH     UNIT         ?PR?_GET_DAYS_IN_MONTH?MAIN
+            CODE    107BH     004EH     UNIT         ?PR?_GET_DAYS_IN_MONTH?DS1302
+            CODE    10C9H     004AH     UNIT         ?PR?UART_ISR?MAIN
+            CODE    1113H     004AH     UNIT         ?PR?UART_ISR?DS1302
+            CODE    115DH     0045H     UNIT         ?PR?UPDATE_TIME_STRUCTURE?MAIN
+            CODE    11A2H     0045H     UNIT         ?PR?UPDATE_TIME_STRUCTURE?DS1302
+            CODE    11E7H     002AH     UNIT         ?PR?_DELAY_MS?LCD
+            CODE    1211H     0027H     UNIT         ?C_INITSEG
+            CODE    1238H     0027H     UNIT         ?PR?_LCD_WRITE_4DIGIT?LCD
+            CODE    125FH     0025H     UNIT         ?PR?_UART_PUTS?MAIN
+            CODE    1284H     0025H     UNIT         ?PR?_UART_PUTS?DS1302
+            CODE    12A9H     0025H     UNIT         ?PR?_LCD_WRITE_STRING?LCD
+            CODE    12CEH     0021H     UNIT         ?PR?_LCD_TIME?MAIN
+            CODE    12EFH     0021H     UNIT         ?PR?_LCD_TIME?DS1302
+            CODE    1310H     0020H     UNIT         ?PR?LCD_INIT?LCD
+            CODE    1330H     001EH     UNIT         ?PR?_LCD_WRITE_DATA?LCD
+            CODE    134EH     001DH     UNIT         ?PR?TIMER0_ISR?MAIN
+            CODE    136BH     001DH     UNIT         ?PR?TIMER0_ISR?DS1302
+            CODE    1388H     001AH     UNIT         ?PR?_UART_2DIG?MAIN
+            CODE    13A2H     001AH     UNIT         ?PR?_UART_2DIG?DS1302
+            CODE    13BCH     001AH     UNIT         ?PR?_LCD_WRITE_2DIGIT?LCD
+            CODE    13D6H     0018H     UNIT         ?PR?UART_INIT?MAIN
+            CODE    13EEH     0018H     UNIT         ?PR?UART_INIT?DS1302
+            CODE    1406H     0015H     UNIT         ?PR?TIMER_INIT?MAIN
+            CODE    141BH     0015H     UNIT         ?PR?TIMER_INIT?DS1302
+            CODE    1430H     0011H     UNIT         ?PR?_LCD_WRITE_COMMAND?LCD
+            CODE    1441H     000FH     UNIT         ?PR?_LCD_SET_CURSOR?LCD
+            CODE    1450H     000DH     UNIT         ?PR?_UART_PUTC?MAIN
+            CODE    145DH     000DH     UNIT         ?PR?_UART_PUTC?DS1302
+            CODE    146AH     000CH     UNIT         ?PR?LCD_CLEAR?LCD
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\Task25_6 (MAIN)
+
+
+SEGMENT                                     DATA_GROUP 
+  +--> CALLED SEGMENT                     START    LENGTH
+---------------------------------------------------------
+?C_C51STARTUP                             -----    -----
+  +--> ?PR?MAIN?MAIN
+  +--> ?C_INITSEG
+
+?PR?MAIN?MAIN                             0008H    0001H
+  +--> ?PR?LCD_INIT?LCD
+  +--> ?CO?MAIN
+  +--> ?PR?_LCD_WRITE_STRING?LCD
+  +--> ?PR?_DELAY_MS?LCD
+  +--> ?PR?LCD_CLEAR?LCD
+  +--> ?PR?TIMER_INIT?MAIN
+  +--> ?PR?UART_INIT?MAIN
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 3
+
+
+  +--> ?PR?UPDATE_LCD?MAIN
+  +--> ?PR?_UART_PUTS?MAIN
+  +--> ?PR?_HANDLE_SERIAL_COMMAND?MAIN
+  +--> ?PR?ANSWER_QUERY?MAIN
+  +--> ?PR?UPDATE_TIME_STRUCTURE?MAIN
+
+?PR?LCD_INIT?LCD                          -----    -----
+  +--> ?PR?_LCD_WRITE_COMMAND?LCD
+  +--> ?PR?_DELAY_MS?LCD
+
+?PR?_LCD_WRITE_COMMAND?LCD                -----    -----
+  +--> ?PR?_DELAY_MS?LCD
+
+?PR?_LCD_WRITE_STRING?LCD                 000FH    0003H
+  +--> ?PR?_LCD_WRITE_DATA?LCD
+
+?PR?_LCD_WRITE_DATA?LCD                   -----    -----
+  +--> ?PR?_DELAY_MS?LCD
+
+?PR?LCD_CLEAR?LCD                         -----    -----
+  +--> ?PR?_LCD_WRITE_COMMAND?LCD
+  +--> ?PR?_DELAY_MS?LCD
+
+?PR?UPDATE_LCD?MAIN                       0009H    0006H
+  +--> ?PR?_LCD_SET_CURSOR?LCD
+  +--> ?CO?MAIN
+  +--> ?PR?_LCD_WRITE_STRING?LCD
+  +--> ?PR?_LCD_TIME?MAIN
+
+?PR?_LCD_SET_CURSOR?LCD                   -----    -----
+  +--> ?PR?_LCD_WRITE_COMMAND?LCD
+
+?PR?_LCD_TIME?MAIN                        000FH    0002H
+  +--> ?PR?_LCD_WRITE_2DIGIT?LCD
+  +--> ?PR?_LCD_WRITE_DATA?LCD
+
+?PR?_LCD_WRITE_2DIGIT?LCD                 -----    -----
+  +--> ?PR?_LCD_WRITE_DATA?LCD
+
+?PR?_UART_PUTS?MAIN                       000FH    0003H
+  +--> ?PR?_UART_PUTC?MAIN
+
+?PR?_UART_PUTC?MAIN                       -----    -----
+  +--> ?PR?_UART_2DIG?MAIN
+
+?PR?_HANDLE_SERIAL_COMMAND?MAIN           0009H    0003H
+  +--> ?PR?_GET_DAYS_IN_MONTH?MAIN
+
+?PR?_GET_DAYS_IN_MONTH?MAIN               -----    -----
+  +--> ?CO?MAIN
+
+?PR?ANSWER_QUERY?MAIN                     0009H    0006H
+  +--> ?CO?MAIN
+  +--> ?PR?_UART_PUTS?MAIN
+  +--> ?PR?_UART_PUTC?MAIN
+  +--> ?PR?_UART_2DIG?MAIN
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 4
+
+
+?PR?UPDATE_TIME_STRUCTURE?MAIN            -----    -----
+  +--> ?PR?_GET_DAYS_IN_MONTH?MAIN
+
+
+
+UNRESOLVED EXTERNAL SYMBOLS:
+   ?_DS1302_GET_TIME?BYTE
+   ?_DS1302_SET_TIME?BYTE
+   DS1302_INIT
+   _DS1302_GET_TIME
+   _DS1302_SET_TIME
+
+
+
+IGNORED SYMBOLS:
+   ANSWER_QUERY
+   MAIN
+   RX_BUF
+   RX_INDEX
+   RX_READY
+   SECOND_FLAG
+   SW_TIME
+   TIMER0_ISR
+   TIMER_COUNT
+   TIMER_INIT
+   UART_INIT
+   UART_ISR
+   UPDATE_LCD
+   UPDATE_TIME_STRUCTURE
+   _GET_DAYS_IN_MONTH
+   _HANDLE_SERIAL_COMMAND
+   _LCD_TIME
+   _UART_2DIG
+   _UART_PUTC
+   _UART_PUTS
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\Task25_6 (MAIN)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  C:134EH         PUBLIC        timer0_isr
+  B:00A8H.7       PUBLIC        EA
+  C:1388H         PUBLIC        _uart_2dig
+  D:0021H         PUBLIC        rx_buf
+  C:1033H         PUBLIC        _get_days_in_month
+  B:00A8H.4       PUBLIC        ES
+  C:0800H         PUBLIC        _handle_serial_command
+  B:0098H.0       PUBLIC        RI
+  C:0B8DH         PUBLIC        update_lcd
+  B:0098H.1       PUBLIC        TI
+  C:0F57H         PUBLIC        main
+  C:0CB7H         PUBLIC        answer_query
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 5
+
+
+  D:0035H         PUBLIC        timer_count
+  D:0099H         PUBLIC        SBUF
+  D:0098H         PUBLIC        SCON
+  D:0089H         PUBLIC        TMOD
+  C:1406H         PUBLIC        timer_init
+  C:12CEH         PUBLIC        _lcd_time
+  B:00A8H.1       PUBLIC        ET0
+  D:008CH         PUBLIC        TH0
+  D:008DH         PUBLIC        TH1
+  D:008AH         PUBLIC        TL0
+  D:008BH         PUBLIC        TL1
+  C:13D6H         PUBLIC        uart_init
+  B:0088H.4       PUBLIC        TR0
+  B:0088H.6       PUBLIC        TR1
+  C:1455H         PUBLIC        _uart_putc
+  B:0020H.0       PUBLIC        rx_ready
+  D:0036H         PUBLIC        rx_index
+  C:125FH         PUBLIC        _uart_puts
+  C:10C9H         PUBLIC        uart_isr
+  C:115DH         PUBLIC        update_time_structure
+  B:0020H.1       PUBLIC        second_flag
+  D:0037H         PUBLIC        sw_time
+  -------         PROC          UART_INIT
+  C:13D6H         LINE#         21
+  C:13D6H         LINE#         22
+  C:13DEH         LINE#         23
+  C:13E4H         LINE#         24
+  C:13E7H         LINE#         25
+  C:13EDH         LINE#         26
+  -------         ENDPROC       UART_INIT
+  C:1450H         SYMBOL        L?0064
+  -------         PROC          L?0063
+  -------         ENDPROC       L?0063
+  C:1450H         SYMBOL        L?0064
+  -------         PROC          _UART_PUTC
+  D:0007H         SYMBOL        c
+  C:1455H         LINE#         28
+  -------         ENDPROC       _UART_PUTC
+  -------         PROC          _UART_PUTS
+  D:000FH         SYMBOL        s
+  C:125FH         LINE#         29
+  -------         ENDPROC       _UART_PUTS
+  -------         PROC          _UART_2DIG
+  D:0006H         SYMBOL        v
+  C:1388H         LINE#         30
+  -------         ENDPROC       _UART_2DIG
+  -------         PROC          UART_ISR
+  C:10C9H         LINE#         32
+  C:10D4H         LINE#         33
+  C:10D7H         LINE#         34
+  C:10D9H         LINE#         35
+  C:10E0H         LINE#         36
+  C:10EFH         LINE#         37
+  C:10F1H         LINE#         38
+  C:10F7H         LINE#         39
+  C:10FAH         LINE#         40
+  C:1105H         LINE#         41
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 6
+
+
+  C:1105H         LINE#         42
+  C:110AH         LINE#         43
+  -------         ENDPROC       UART_ISR
+  -------         PROC          L?0065
+  -------         ENDPROC       L?0065
+  -------         PROC          _GET_DAYS_IN_MONTH
+  D:0003H         SYMBOL        m
+  D:0082H         SYMBOL        y
+  -------         DO            
+  C:0ECDH         SYMBOL        dim
+  -------         ENDDO         
+  C:1033H         LINE#         46
+  C:1039H         LINE#         48
+  C:1064H         LINE#         49
+  C:107AH         LINE#         50
+  -------         ENDPROC       _GET_DAYS_IN_MONTH
+  -------         PROC          UPDATE_TIME_STRUCTURE
+  C:115DH         LINE#         52
+  C:115DH         LINE#         53
+  C:1169H         LINE#         54
+  C:1174H         LINE#         55
+  C:117FH         LINE#         56
+  C:118AH         LINE#         57
+  C:118DH         LINE#         58
+  C:11A1H         LINE#         59
+  C:11A1H         LINE#         60
+  -------         ENDPROC       UPDATE_TIME_STRUCTURE
+  -------         PROC          _LCD_TIME
+  D:0007H         SYMBOL        h
+  D:000FH         SYMBOL        m
+  D:0010H         SYMBOL        s
+  C:12CEH         LINE#         63
+  C:12D2H         LINE#         64
+  C:12DCH         LINE#         65
+  C:12E8H         LINE#         66
+  -------         ENDPROC       _LCD_TIME
+  -------         PROC          UPDATE_LCD
+  -------         DO            
+  D:0009H         SYMBOL        h
+  D:000AH         SYMBOL        m
+  D:000BH         SYMBOL        s
+  D:000CH         SYMBOL        d
+  D:000DH         SYMBOL        mo
+  D:000EH         SYMBOL        y
+  -------         ENDDO         
+  C:0B8DH         LINE#         69
+  C:0B8DH         LINE#         71
+  C:0BC3H         LINE#         73
+  C:0BD2H         LINE#         74
+  C:0BDBH         LINE#         75
+  C:0BE4H         LINE#         77
+  C:0BEBH         LINE#         78
+  C:0C06H         LINE#         79
+  C:0C21H         LINE#         80
+  -------         ENDPROC       UPDATE_LCD
+  -------         PROC          _HANDLE_SERIAL_COMMAND
+  D:0009H         SYMBOL        s
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 7
+
+
+  -------         DO            
+  D:0007H         SYMBOL        i
+  -------         ENDDO         
+  C:0800H         LINE#         83
+  C:0806H         LINE#         85
+  C:0817H         LINE#         86
+  C:083AH         LINE#         89
+  C:0855H         LINE#         90
+  C:086DH         LINE#         91
+  C:0885H         LINE#         92
+  C:089DH         LINE#         93
+  C:08B5H         LINE#         94
+  C:091DH         LINE#         97
+  C:094EH         LINE#         99
+  C:0951H         LINE#         102
+  C:096DH         LINE#         103
+  C:096FH         LINE#         104
+  -------         ENDPROC       _HANDLE_SERIAL_COMMAND
+  -------         PROC          ANSWER_QUERY
+  -------         DO            
+  D:0009H         SYMBOL        h
+  D:000AH         SYMBOL        m
+  D:000BH         SYMBOL        s
+  D:000CH         SYMBOL        d
+  D:000DH         SYMBOL        mo
+  D:000EH         SYMBOL        y
+  -------         ENDDO         
+  C:0CB7H         LINE#         106
+  C:0CB7H         LINE#         108
+  C:0CEDH         LINE#         109
+  C:0CF6H         LINE#         110
+  C:0D05H         LINE#         111
+  C:0D0EH         LINE#         112
+  C:0D2CH         LINE#         113
+  C:0D3BH         LINE#         114
+  -------         ENDPROC       ANSWER_QUERY
+  -------         PROC          TIMER0_ISR
+  C:134EH         LINE#         118
+  C:1352H         LINE#         119
+  C:1358H         LINE#         120
+  C:1366H         LINE#         121
+  -------         ENDPROC       TIMER0_ISR
+  -------         PROC          TIMER_INIT
+  C:1406H         LINE#         123
+  C:1406H         LINE#         124
+  C:140EH         LINE#         125
+  C:1414H         LINE#         126
+  C:141AH         LINE#         127
+  -------         ENDPROC       TIMER_INIT
+  -------         PROC          MAIN
+  -------         DO            
+  D:0008H         SYMBOL        r
+  -------         ENDDO         
+  C:0F57H         LINE#         130
+  C:0F57H         LINE#         132
+  C:0F6DH         LINE#         133
+  C:0F79H         LINE#         134
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 8
+
+
+  C:0F82H         LINE#         136
+  C:0F82H         LINE#         137
+  C:0F85H         LINE#         138
+  C:0F87H         LINE#         139
+  C:0F92H         LINE#         140
+  C:0FA2H         LINE#         141
+  C:0FACH         LINE#         142
+  C:0FB5H         LINE#         143
+  C:0FB5H         LINE#         144
+  C:0FB8H         LINE#         145
+  C:0FBAH         LINE#         146
+  C:0FBDH         LINE#         147
+  C:0FC0H         LINE#         148
+  C:0FC0H         LINE#         149
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        MAIN
+
+  -------         MODULE        DS1302
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  C:136BH         PUBLIC        timer0_isr
+  B:00A8H.7       PUBLIC        EA
+  C:13A2H         PUBLIC        _uart_2dig
+  D:003EH         PUBLIC        rx_buf
+  C:1081H         PUBLIC        _get_days_in_month
+  B:00A8H.4       PUBLIC        ES
+  C:0970H         PUBLIC        _handle_serial_command
+  B:0098H.0       PUBLIC        RI
+  C:0C22H         PUBLIC        update_lcd
+  B:0098H.1       PUBLIC        TI
+  C:0FC2H         PUBLIC        main
+  C:0D44H         PUBLIC        answer_query
+  D:0052H         PUBLIC        timer_count
+  D:0099H         PUBLIC        SBUF
+  D:0098H         PUBLIC        SCON
+  D:0089H         PUBLIC        TMOD
+  C:141BH         PUBLIC        timer_init
+  C:12EFH         PUBLIC        _lcd_time
+  B:00A8H.1       PUBLIC        ET0
+  D:008CH         PUBLIC        TH0
+  D:008DH         PUBLIC        TH1
+  D:008AH         PUBLIC        TL0
+  D:008BH         PUBLIC        TL1
+  C:13EEH         PUBLIC        uart_init
+  B:0088H.4       PUBLIC        TR0
+  B:0088H.6       PUBLIC        TR1
+  C:1462H         PUBLIC        _uart_putc
+  B:0020H.2       PUBLIC        rx_ready
+  D:0053H         PUBLIC        rx_index
+  C:1284H         PUBLIC        _uart_puts
+  C:1113H         PUBLIC        uart_isr
+  C:11A2H         PUBLIC        update_time_structure
+  B:0020H.3       PUBLIC        second_flag
+  D:0054H         PUBLIC        sw_time
+  -------         PROC          UART_INIT
+  C:13EEH         LINE#         21
+  C:13EEH         LINE#         22
+  C:13F6H         LINE#         23
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 9
+
+
+  C:13FCH         LINE#         24
+  C:13FFH         LINE#         25
+  C:1405H         LINE#         26
+  -------         ENDPROC       UART_INIT
+  C:145DH         SYMBOL        L?0064
+  -------         PROC          L?0063
+  -------         ENDPROC       L?0063
+  C:145DH         SYMBOL        L?0064
+  -------         PROC          _UART_PUTC
+  D:0007H         SYMBOL        c
+  C:1462H         LINE#         28
+  -------         ENDPROC       _UART_PUTC
+  -------         PROC          _UART_PUTS
+  D:005BH         SYMBOL        s
+  C:1284H         LINE#         29
+  -------         ENDPROC       _UART_PUTS
+  -------         PROC          _UART_2DIG
+  D:0006H         SYMBOL        v
+  C:13A2H         LINE#         30
+  -------         ENDPROC       _UART_2DIG
+  -------         PROC          UART_ISR
+  C:1113H         LINE#         32
+  C:111EH         LINE#         33
+  C:1121H         LINE#         34
+  C:1123H         LINE#         35
+  C:112AH         LINE#         36
+  C:1139H         LINE#         37
+  C:113BH         LINE#         38
+  C:1141H         LINE#         39
+  C:1144H         LINE#         40
+  C:114FH         LINE#         41
+  C:114FH         LINE#         42
+  C:1154H         LINE#         43
+  -------         ENDPROC       UART_ISR
+  -------         PROC          L?0065
+  -------         ENDPROC       L?0065
+  -------         PROC          _GET_DAYS_IN_MONTH
+  D:0003H         SYMBOL        m
+  D:0082H         SYMBOL        y
+  -------         DO            
+  C:0F4AH         SYMBOL        dim
+  -------         ENDDO         
+  C:1081H         LINE#         46
+  C:1087H         LINE#         48
+  C:10B2H         LINE#         49
+  C:10C8H         LINE#         50
+  -------         ENDPROC       _GET_DAYS_IN_MONTH
+  -------         PROC          UPDATE_TIME_STRUCTURE
+  C:11A2H         LINE#         52
+  C:11A2H         LINE#         53
+  C:11AEH         LINE#         54
+  C:11B9H         LINE#         55
+  C:11C4H         LINE#         56
+  C:11CFH         LINE#         57
+  C:11D2H         LINE#         58
+  C:11E6H         LINE#         59
+  C:11E6H         LINE#         60
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 10
+
+
+  -------         ENDPROC       UPDATE_TIME_STRUCTURE
+  -------         PROC          _LCD_TIME
+  D:0007H         SYMBOL        h
+  D:001EH         SYMBOL        m
+  D:001FH         SYMBOL        s
+  C:12EFH         LINE#         63
+  C:12F3H         LINE#         64
+  C:12FDH         LINE#         65
+  C:1309H         LINE#         66
+  -------         ENDPROC       _LCD_TIME
+  -------         PROC          UPDATE_LCD
+  -------         DO            
+  D:0012H         SYMBOL        h
+  D:0013H         SYMBOL        m
+  D:0014H         SYMBOL        s
+  D:0015H         SYMBOL        d
+  D:0016H         SYMBOL        mo
+  D:0017H         SYMBOL        y
+  -------         ENDDO         
+  C:0C22H         LINE#         69
+  C:0C22H         LINE#         71
+  C:0C58H         LINE#         73
+  C:0C67H         LINE#         74
+  C:0C70H         LINE#         75
+  C:0C79H         LINE#         77
+  C:0C80H         LINE#         78
+  C:0C9BH         LINE#         79
+  C:0CB6H         LINE#         80
+  -------         ENDPROC       UPDATE_LCD
+  -------         PROC          _HANDLE_SERIAL_COMMAND
+  D:005EH         SYMBOL        s
+  -------         DO            
+  D:0007H         SYMBOL        i
+  -------         ENDDO         
+  C:0970H         LINE#         83
+  C:0976H         LINE#         85
+  C:0987H         LINE#         86
+  C:09AAH         LINE#         89
+  C:09C5H         LINE#         90
+  C:09DDH         LINE#         91
+  C:09F5H         LINE#         92
+  C:0A0DH         LINE#         93
+  C:0A25H         LINE#         94
+  C:0A8DH         LINE#         97
+  C:0ABEH         LINE#         99
+  C:0AC1H         LINE#         102
+  C:0ADDH         LINE#         103
+  C:0ADFH         LINE#         104
+  -------         ENDPROC       _HANDLE_SERIAL_COMMAND
+  -------         PROC          ANSWER_QUERY
+  -------         DO            
+  D:0018H         SYMBOL        h
+  D:0019H         SYMBOL        m
+  D:001AH         SYMBOL        s
+  D:001BH         SYMBOL        d
+  D:001CH         SYMBOL        mo
+  D:001DH         SYMBOL        y
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 11
+
+
+  -------         ENDDO         
+  C:0D44H         LINE#         106
+  C:0D44H         LINE#         108
+  C:0D7AH         LINE#         109
+  C:0D83H         LINE#         110
+  C:0D92H         LINE#         111
+  C:0D9BH         LINE#         112
+  C:0DB9H         LINE#         113
+  C:0DC8H         LINE#         114
+  -------         ENDPROC       ANSWER_QUERY
+  -------         PROC          TIMER0_ISR
+  C:136BH         LINE#         118
+  C:136FH         LINE#         119
+  C:1375H         LINE#         120
+  C:1383H         LINE#         121
+  -------         ENDPROC       TIMER0_ISR
+  -------         PROC          TIMER_INIT
+  C:141BH         LINE#         123
+  C:141BH         LINE#         124
+  C:1423H         LINE#         125
+  C:1429H         LINE#         126
+  C:142FH         LINE#         127
+  -------         ENDPROC       TIMER_INIT
+  -------         PROC          MAIN
+  -------         DO            
+  D:0063H         SYMBOL        r
+  -------         ENDDO         
+  C:0FC2H         LINE#         130
+  C:0FC2H         LINE#         132
+  C:0FD8H         LINE#         133
+  C:0FE4H         LINE#         134
+  C:0FEDH         LINE#         136
+  C:0FEDH         LINE#         137
+  C:0FF0H         LINE#         138
+  C:0FF2H         LINE#         139
+  C:0FFDH         LINE#         140
+  C:100DH         LINE#         141
+  C:1017H         LINE#         142
+  C:1020H         LINE#         143
+  C:1020H         LINE#         144
+  C:1023H         LINE#         145
+  C:1025H         LINE#         146
+  C:1028H         LINE#         147
+  C:102BH         LINE#         148
+  C:102BH         LINE#         149
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        DS1302
+
+  -------         MODULE        LCD
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:00A0H         PUBLIC        P2
+  C:1437H         PUBLIC        _lcd_write_command
+  C:146AH         PUBLIC        lcd_clear
+  C:12A9H         PUBLIC        _lcd_write_string
+  C:1344H         PUBLIC        _lcd_write_data
+  B:00A0H.7       PUBLIC        LCD_EN
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 12
+
+
+  C:1310H         PUBLIC        lcd_init
+  C:11F1H         PUBLIC        _delay_ms
+  B:00A0H.6       PUBLIC        LCD_RS
+  B:00A0H.5       PUBLIC        LCD_RW
+  C:1441H         PUBLIC        _lcd_set_cursor
+  C:13BCH         PUBLIC        _lcd_write_2digit
+  C:1238H         PUBLIC        _lcd_write_4digit
+  -------         PROC          L?0025
+  -------         ENDPROC       L?0025
+  -------         PROC          _DELAY_MS
+  D:0006H         SYMBOL        ms
+  -------         DO            
+  D:0004H         SYMBOL        i
+  D:0002H         SYMBOL        j
+  -------         ENDDO         
+  C:11F1H         LINE#         7
+  C:11F1H         LINE#         9
+  C:11FBH         LINE#         10
+  C:1210H         LINE#         11
+  -------         ENDPROC       _DELAY_MS
+  -------         PROC          L?0026
+  -------         ENDPROC       L?0026
+  -------         PROC          _LCD_WRITE_COMMAND
+  D:0007H         SYMBOL        command
+  C:1437H         LINE#         13
+  C:1437H         LINE#         14
+  C:1439H         LINE#         15
+  C:1439H         LINE#         16
+  C:1439H         LINE#         17
+  C:1439H         LINE#         18
+  C:143CH         LINE#         19
+  C:143EH         LINE#         20
+  -------         ENDPROC       _LCD_WRITE_COMMAND
+  C:1336H         SYMBOL        L?0024
+  -------         PROC          L?0023
+  -------         ENDPROC       L?0023
+  C:1336H         SYMBOL        L?0024
+  -------         PROC          _LCD_WRITE_DATA
+  D:0007H         SYMBOL        dataa
+  C:1344H         LINE#         23
+  C:1344H         LINE#         24
+  C:1346H         LINE#         25
+  C:1346H         LINE#         26
+  C:1346H         LINE#         27
+  C:1346H         LINE#         28
+  C:1349H         LINE#         29
+  C:134BH         LINE#         30
+  -------         ENDPROC       _LCD_WRITE_DATA
+  -------         PROC          LCD_INIT
+  C:1310H         LINE#         33
+  C:1310H         LINE#         34
+  C:1312H         LINE#         35
+  C:1315H         LINE#         36
+  C:1317H         LINE#         37
+  C:131AH         LINE#         38
+  C:131FH         LINE#         39
+  C:1324H         LINE#         40
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 13
+
+
+  C:132BH         LINE#         41
+  -------         ENDPROC       LCD_INIT
+  -------         PROC          LCD_CLEAR
+  C:146AH         LINE#         44
+  C:146AH         LINE#         45
+  C:146FH         LINE#         46
+  -------         ENDPROC       LCD_CLEAR
+  -------         PROC          _LCD_SET_CURSOR
+  D:0007H         SYMBOL        row
+  D:0005H         SYMBOL        col
+  -------         DO            
+  D:0007H         SYMBOL        address
+  -------         ENDDO         
+  C:1441H         LINE#         49
+  C:1441H         LINE#         50
+  C:144AH         LINE#         51
+  C:144DH         LINE#         52
+  -------         ENDPROC       _LCD_SET_CURSOR
+  -------         PROC          _LCD_WRITE_STRING
+  D:000FH         SYMBOL        str
+  C:12A9H         LINE#         55
+  C:12AFH         LINE#         56
+  C:12BAH         LINE#         57
+  C:12CBH         LINE#         58
+  C:12CDH         LINE#         59
+  -------         ENDPROC       _LCD_WRITE_STRING
+  -------         PROC          _LCD_WRITE_2DIGIT
+  D:0001H         SYMBOL        val
+  C:13BCH         LINE#         61
+  C:13BEH         LINE#         62
+  C:13C9H         LINE#         63
+  -------         ENDPROC       _LCD_WRITE_2DIGIT
+  -------         PROC          _LCD_WRITE_4DIGIT
+  D:0061H         SYMBOL        val
+  C:1238H         LINE#         66
+  C:123CH         LINE#         67
+  C:1243H         LINE#         68
+  C:1248H         LINE#         69
+  C:124DH         LINE#         70
+  -------         ENDPROC       _LCD_WRITE_4DIGIT
+  -------         ENDMOD        LCD
+
+  -------         MODULE        ?C?CLDPTR
+  C:0AE0H         PUBLIC        ?C?CLDPTR
+  -------         ENDMOD        ?C?CLDPTR
+
+  -------         MODULE        ?C?CLDOPTR
+  C:0AF9H         PUBLIC        ?C?CLDOPTR
+  -------         ENDMOD        ?C?CLDOPTR
+
+  -------         MODULE        ?C?IMUL
+  C:0B26H         PUBLIC        ?C?IMUL
+  -------         ENDMOD        ?C?IMUL
+
+  -------         MODULE        ?C?UIDIV
+  C:0B38H         PUBLIC        ?C?UIDIV
+  -------         ENDMOD        ?C?UIDIV
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 14
+
+
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  SW_TIME
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  SECOND_FLAG
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  RX_INDEX
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  RX_READY
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  TIMER_COUNT
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  RX_BUF
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  MAIN
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  TIMER_INIT
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  TIMER0_ISR
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  ANSWER_QUERY
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  _HANDLE_SERIAL_COMMAND
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  UPDATE_LCD
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  _LCD_TIME
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  UPDATE_TIME_STRUCTURE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 15
+
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  _GET_DAYS_IN_MONTH
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  UART_ISR
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  _UART_2DIG
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  _UART_PUTS
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  _UART_PUTC
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  UART_INIT
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?MAIN?DS1302
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_LCD_WRITE_4DIGIT?LCD
+
+*** WARNING L5: CODE SPACE MEMORY OVERLAP
+    FROM:    000BH
+    TO:      000DH
+
+*** WARNING L5: CODE SPACE MEMORY OVERLAP
+    FROM:    0023H
+    TO:      0025H
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  DS1302_INIT
+    MODULE:  .\Objects\main.obj (MAIN)
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  _DS1302_GET_TIME
+    MODULE:  .\Objects\main.obj (MAIN)
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  _DS1302_SET_TIME
+    MODULE:  .\Objects\main.obj (MAIN)
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  ?_DS1302_SET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 16
+
+
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0B8EH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0B91H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0B94H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0B97H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0B9AH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0B9DH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0BA0H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0BA3H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0BA6H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0BA9H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0BACH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 17
+
+
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0BAFH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0BB2H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0BB5H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0BB8H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DS1302_GET_TIME
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0BC1H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_SET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0953H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_SET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0956H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_SET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0963H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DS1302_SET_TIME
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 096BH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CB8H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CBBH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 18
+
+
+    ADDRESS: 0CBEH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CC1H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CC4H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CC7H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CCAH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CCDH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CD0H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CD3H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CD6H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CD9H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CDCH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CDFH
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 19
+
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CE2H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DS1302_GET_TIME
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CEBH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  DS1302_INIT
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0F6EH
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  DS1302_INIT
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  _DS1302_GET_TIME
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  _DS1302_SET_TIME
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  ?_DS1302_SET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C23H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C26H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C29H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C2CH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 20
+
+
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C2FH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C32H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C35H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C38H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C3BH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C3EH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C41H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C44H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C47H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C4AH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C4DH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DS1302_GET_TIME
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C56H
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 21
+
+
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_SET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0AC3H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_SET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0AC6H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_SET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0AD3H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DS1302_SET_TIME
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0ADBH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D45H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D48H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D4BH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D4EH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D51H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D54H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D57H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 22
+
+
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D5AH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D5DH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D60H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D63H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D66H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D69H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D6CH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D6FH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DS1302_GET_TIME
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D78H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  DS1302_INIT
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0FD9H
+
+*** ERROR L118: REFERENCE MADE TO ERRONEOUS EXTERNAL
+    SYMBOL:  MAIN
+    MODULE:  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_INIT)
+    ADDRESS: 0DDEH
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0B48H BYTE (141%) *
+******************************************************************************
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 23
+
+
+
+Program Size: data=100.4 xdata=0 code=3205
+LINK/LOCATE RUN COMPLETE.  88 WARNING(S),  21 ERROR(S)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  SW_TIME
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  SECOND_FLAG
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  RX_INDEX
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  RX_READY
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  TIMER_COUNT
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  RX_BUF
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  MAIN
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  TIMER_INIT
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  TIMER0_ISR
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  ANSWER_QUERY
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  _HANDLE_SERIAL_COMMAND
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  UPDATE_LCD
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  _LCD_TIME
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 24
+
+
+    SYMBOL:  UPDATE_TIME_STRUCTURE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  _GET_DAYS_IN_MONTH
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  UART_ISR
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  _UART_2DIG
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  _UART_PUTS
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  _UART_PUTC
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  UART_INIT
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?MAIN?DS1302
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_LCD_WRITE_4DIGIT?LCD
+
+*** WARNING L5: CODE SPACE MEMORY OVERLAP
+    FROM:    000BH
+    TO:      000DH
+
+*** WARNING L5: CODE SPACE MEMORY OVERLAP
+    FROM:    0023H
+    TO:      0025H
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  DS1302_INIT
+    MODULE:  .\Objects\main.obj (MAIN)
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  _DS1302_GET_TIME
+    MODULE:  .\Objects\main.obj (MAIN)
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  _DS1302_SET_TIME
+    MODULE:  .\Objects\main.obj (MAIN)
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 25
+
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  ?_DS1302_SET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0B8EH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0B91H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0B94H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0B97H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0B9AH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0B9DH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0BA0H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0BA3H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0BA6H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0BA9H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 26
+
+
+    ADDRESS: 0BACH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0BAFH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0BB2H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0BB5H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0BB8H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DS1302_GET_TIME
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0BC1H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_SET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0953H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_SET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0956H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_SET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0963H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DS1302_SET_TIME
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 096BH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CB8H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CBBH
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 27
+
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CBEH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CC1H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CC4H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CC7H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CCAH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CCDH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CD0H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CD3H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CD6H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CD9H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CDCH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 28
+
+
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CDFH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CE2H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DS1302_GET_TIME
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0CEBH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  DS1302_INIT
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0F6EH
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  DS1302_INIT
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  _DS1302_GET_TIME
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  _DS1302_SET_TIME
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  ?_DS1302_SET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C23H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C26H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C29H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C2CH
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 29
+
+
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C2FH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C32H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C35H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C38H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C3BH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C3EH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C41H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C44H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C47H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C4AH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C4DH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 30
+
+
+    SYMBOL:  _DS1302_GET_TIME
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0C56H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_SET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0AC3H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_SET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0AC6H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_SET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0AD3H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DS1302_SET_TIME
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0ADBH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D45H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D48H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D4BH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D4EH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D51H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D54H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 31
+
+
+    ADDRESS: 0D57H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D5AH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D5DH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D60H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D63H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D66H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D69H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D6CH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DS1302_GET_TIME?BYTE
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D6FH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DS1302_GET_TIME
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0D78H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  DS1302_INIT
+    MODULE:  .\Objects\ds1302.obj (DS1302)
+    ADDRESS: 0FD9H
+
+*** ERROR L118: REFERENCE MADE TO ERRONEOUS EXTERNAL
+    SYMBOL:  MAIN
+    MODULE:  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_INIT)
+    ADDRESS: 0DDEH
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/22/2026  14:32:00  PAGE 32
+
+
+*** FATAL ERROR L250: CODE SIZE LIMIT IN RESTRICTED VERSION EXCEEDED
+    MODULE:  C:\KEIL_V5\C51\LIB\C51S.LIB (-----)
+    LIMIT:   0800H BYTES

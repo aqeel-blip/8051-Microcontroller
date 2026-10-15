@@ -1,0 +1,216 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              08/20/2026 16:04:34 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          #include <stdio.h>
+   3          #include "lcd.h"
+   4          
+   5          // DS1302 Pin Mapping (PRECHIN A2 Board)
+   6          sbit DS1302_IO   = P3^4;
+   7          sbit DS1302_CE   = P3^5;
+   8          sbit DS1302_SCLK = P3^6;
+   9          
+  10          // DS1302 Register Addresses
+  11          #define REG_SEC   0x80
+  12          #define REG_MIN   0x82
+  13          #define REG_HOUR  0x84
+  14          #define REG_DATE  0x86
+  15          #define REG_MONTH 0x88
+  16          #define REG_YEAR  0x8C
+  17          #define REG_WP    0x8E
+  18          
+  19          char rxdata[16];
+  20          volatile unsigned char rxindex = 0;
+  21          volatile bit string_received = 0;
+  22          
+  23          unsigned char BCD_To_DEC(unsigned char bcd) {
+  24   1          return ((bcd >> 4) * 10) + (bcd & 0x0F);
+  25   1      }
+  26          
+  27          unsigned char DEC_To_BCD(unsigned char dec) {
+  28   1          return (((dec / 10) << 4) | (dec % 10));
+  29   1      }
+  30          
+  31          void UART_Init(void) {
+  32   1          SCON = 0x50;  // 8-bit UART
+  33   1          TMOD &= 0x0F;
+  34   1          TMOD |= 0x20; // Timer 1 Mode 2
+  35   1          TH1 = 0xFD;   // 9600 Baud Rate @ 11.0592 MHz
+  36   1          TL1 = 0xFD;
+  37   1          TR1 = 1;
+  38   1          ES  = 1;
+  39   1          EA  = 1;
+  40   1      }
+  41          
+  42          void UART_SendChar(char ch) {
+  43   1          SBUF = ch;
+  44   1          while (!TI);
+  45   1          TI = 0;
+  46   1      }
+  47          
+  48          void UART_SendString(char *str) {
+  49   1          while (*str) {
+  50   2              UART_SendChar(*str++);
+  51   2          }
+  52   1      }
+  53          
+  54          void DS1302_WriteByte(unsigned char dat) {
+C51 COMPILER V9.60.7.0   MAIN                                                              08/20/2026 16:04:34 PAGE 2   
+
+  55   1          unsigned char i;
+  56   1          for (i = 0; i < 8; i++) {
+  57   2              DS1302_IO = dat & 0x01;
+  58   2              DS1302_SCLK = 1;
+  59   2              DS1302_SCLK = 0;
+  60   2              dat >>= 1;
+  61   2          }
+  62   1      }
+  63          
+  64          unsigned char DS1302_ReadByte(void) {
+  65   1          unsigned char i, dat = 0;
+  66   1          DS1302_IO = 1; // Release I/O latch for input reading
+  67   1          for (i = 0; i < 8; i++) {
+  68   2              dat >>= 1;
+  69   2              if (DS1302_IO) dat |= 0x80;
+  70   2              DS1302_SCLK = 1;
+  71   2              DS1302_SCLK = 0;
+  72   2          }
+  73   1          return dat;
+  74   1      }
+  75          
+  76          void DS1302_WriteReg(unsigned char reg, unsigned char dat) {
+  77   1          DS1302_CE = 0;
+  78   1          DS1302_SCLK = 0;
+  79   1          DS1302_CE = 1;
+  80   1          DS1302_WriteByte(reg);
+  81   1          DS1302_WriteByte(dat);
+  82   1          DS1302_CE = 0;
+  83   1      }
+  84          
+  85          unsigned char DS1302_ReadReg(unsigned char reg) {
+  86   1          unsigned char dat;
+  87   1          DS1302_CE = 0;
+  88   1          DS1302_SCLK = 0;
+  89   1          DS1302_CE = 1;
+  90   1          DS1302_WriteByte(reg | 0x01);
+  91   1          dat = DS1302_ReadByte();
+  92   1          DS1302_CE = 0;
+  93   1          return dat;
+  94   1      }
+  95          
+  96          void DS1302_Init(void) {
+  97   1          unsigned char sec;
+  98   1          DS1302_WriteReg(REG_WP, 0x00); // Disable Write Protect
+  99   1          
+ 100   1          sec = DS1302_ReadReg(REG_SEC);
+ 101   1          if (sec & 0x80) {              // Clear Clock Halt (CH) bit if set
+ 102   2              DS1302_WriteReg(REG_SEC, 0x00);
+ 103   2          }
+ 104   1      }
+ 105          
+ 106          void DS1302_SetTime(unsigned char y, unsigned char m, unsigned char d, unsigned char h, unsigned char min,
+             - unsigned char s) {
+ 107   1          DS1302_WriteReg(REG_WP, 0x00);
+ 108   1          DS1302_WriteReg(REG_YEAR, DEC_To_BCD(y));
+ 109   1          DS1302_WriteReg(REG_MONTH, DEC_To_BCD(m));
+ 110   1          DS1302_WriteReg(REG_DATE, DEC_To_BCD(d));
+ 111   1          DS1302_WriteReg(REG_HOUR, DEC_To_BCD(h));
+ 112   1          DS1302_WriteReg(REG_MIN, DEC_To_BCD(min));
+ 113   1          DS1302_WriteReg(REG_SEC, DEC_To_BCD(s) & 0x7F);
+ 114   1          DS1302_WriteReg(REG_WP, 0x80);
+ 115   1      }
+C51 COMPILER V9.60.7.0   MAIN                                                              08/20/2026 16:04:34 PAGE 3   
+
+ 116          
+ 117          void Delay_ms(unsigned int ms) {
+ 118   1          unsigned int i, j;
+ 119   1          for (i = 0; i < ms; i++)
+ 120   1              for (j = 0; j < 120; j++);
+ 121   1      }
+ 122          
+ 123          void main(void) {
+ 124   1          char dateBuf[17];
+ 125   1          char timeBuf[17];
+ 126   1          unsigned char y, m, d, h, min, s;
+ 127   1      
+ 128   1          UART_Init();
+ 129   1          LCD_Init();
+ 130   1          DS1302_Init();
+ 131   1      
+ 132   1          LCD_ShowString(1, 1, " RTC Initialized ");
+ 133   1          Delay_ms(1000);
+ 134   1          LCD_Clear();
+ 135   1      
+ 136   1          while (1) {
+ 137   2              if (string_received) {
+ 138   3                  if (rxindex >= 12) {
+ 139   4                      y   = (rxdata[0] - '0') * 10 + (rxdata[1] - '0');
+ 140   4                      m   = (rxdata[2] - '0') * 10 + (rxdata[3] - '0');
+ 141   4                      d   = (rxdata[4] - '0') * 10 + (rxdata[5] - '0');
+ 142   4                      h   = (rxdata[6] - '0') * 10 + (rxdata[7] - '0');
+ 143   4                      min = (rxdata[8] - '0') * 10 + (rxdata[9] - '0');
+ 144   4                      s   = (rxdata[10] - '0') * 10 + (rxdata[11] - '0');
+ 145   4      
+ 146   4                      DS1302_SetTime(y, m, d, h, min, s);
+ 147   4                      UART_SendString("RTC Updated!\r\n");
+ 148   4                  }
+ 149   3                  rxindex = 0;
+ 150   3                  string_received = 0;
+ 151   3              }
+ 152   2      
+ 153   2              // Read RTC registers
+ 154   2              y   = BCD_To_DEC(DS1302_ReadReg(REG_YEAR));
+ 155   2              m   = BCD_To_DEC(DS1302_ReadReg(REG_MONTH));
+ 156   2              d   = BCD_To_DEC(DS1302_ReadReg(REG_DATE));
+ 157   2              h   = BCD_To_DEC(DS1302_ReadReg(REG_HOUR));
+ 158   2              min = BCD_To_DEC(DS1302_ReadReg(REG_MIN));
+ 159   2              s   = BCD_To_DEC(DS1302_ReadReg(REG_SEC) & 0x7F);
+ 160   2      
+ 161   2              // Format for LCD using Keil unsigned byte specifier %02bu
+ 162   2              sprintf(dateBuf, "Date: 20%02bu-%02bu-%02bu", y, m, d);
+ 163   2              sprintf(timeBuf, "Time: %02bu:%02bu:%02bu", h, min, s);
+ 164   2      
+ 165   2              LCD_ShowString(1, 1, dateBuf);
+ 166   2              LCD_ShowString(2, 1, timeBuf);
+ 167   2      
+ 168   2              Delay_ms(500);
+ 169   2          }
+ 170   1      }
+ 171          
+ 172          void UART_ISR(void) interrupt 4 {
+ 173   1          if (RI) {
+ 174   2              char ch = SBUF;
+ 175   2              RI = 0;
+ 176   2              if (ch != '\r' && ch != '\n') {
+ 177   3                  if (rxindex < 15) {
+C51 COMPILER V9.60.7.0   MAIN                                                              08/20/2026 16:04:34 PAGE 4   
+
+ 178   4                      rxdata[rxindex++] = ch;
+ 179   4                  }
+ 180   3              } else {
+ 181   3                  rxdata[rxindex] = '\0';
+ 182   3                  string_received = 1;
+ 183   3              }
+ 184   2          }
+ 185   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    718    ----
+   CONSTANT SIZE    =     83    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     17      50
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,57 @@
+C51 COMPILER V9.60.7.0   FREQ_GENE                                                         09/23/2026 15:47:51 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE FREQ_GENE
+OBJECT MODULE PLACED IN .\Objects\Freq gene.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Freq gene.c OPTIMIZE(8,SIZE) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\
+                    -Freq gene.lst) TABS(2) OBJECT(.\Objects\Freq gene.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "Freq gene.h"
+   3          
+   4          /* 1 kHz: half-period ticks = TICK_HZ / (2 * GEN_HZ) = 460.8 -> 461 */
+   5          #define HALF_PERIOD_TICKS  (((TICK_HZ) + GEN_HZ) / (GEN_HZ * 2UL))
+   6          #define T0_RELOAD          (65536UL - HALF_PERIOD_TICKS)
+   7          #define T0_TH              ((unsigned char)(T0_RELOAD >> 8))
+   8          #define T0_TL              ((unsigned char)(T0_RELOAD & 0xFF))
+   9          
+  10          sbit GEN_PIN = P1^0;
+  11          
+  12          static void t0_reload(void) {
+  13   1          TH0 = T0_TH;
+  14   1          TL0 = T0_TL;
+  15   1      }
+  16          
+  17          void timer0_isr(void) interrupt 1 {
+  18   1          t0_reload();
+  19   1          GEN_PIN = !GEN_PIN;
+  20   1      }
+  21          
+  22          void freq_gen_init(void) {
+  23   1          GEN_PIN = 0;
+  24   1          /* Keep Timer 1 bits; only program Timer 0 mode 1 */
+  25   1          TMOD = (TMOD & 0xF0) | 0x01;
+  26   1          t0_reload();
+  27   1          ET0 = 1;
+  28   1          TR0 = 1;
+  29   1      }
+  30          
+  31          unsigned int freq_gen_get_hz(void) {
+  32   1          return (unsigned int)GEN_HZ;
+  33   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     36    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

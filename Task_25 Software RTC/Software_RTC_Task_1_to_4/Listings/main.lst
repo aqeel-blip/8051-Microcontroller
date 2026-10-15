@@ -1,0 +1,153 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              09/18/2026 11:41:45 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "lcd.h"
+   3          
+   4          struct __time {
+   5              unsigned int hour;
+   6              unsigned int minute;
+   7              unsigned int second;
+   8              unsigned int day;
+   9              unsigned int month;
+  10              unsigned int year;
+  11          };
+  12          
+  13          // Initial time set to current date and time
+  14          struct __time current_time = {11, 26, 24, 18, 9, 2026};
+  15          
+  16          volatile bit second_flag = 0;
+  17          unsigned int timer_count = 0;
+  18          
+  19          unsigned char is_leap_year(unsigned int year) {
+  20   1          if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {
+  21   2              return 1;
+  22   2          }
+  23   1          return 0;
+  24   1      }
+  25          
+  26          unsigned char get_days_in_month(unsigned int month, unsigned int year) {
+  27   1          if (month == 2) {
+  28   2              return is_leap_year(year) ? 29 : 28;
+  29   2          }
+  30   1          if (month == 4 || month == 6 || month == 9 || month == 11) {
+  31   2              return 30;
+  32   2          }
+  33   1          return 31;
+  34   1      }
+  35          
+  36          void update_time_structure(void) {
+  37   1          current_time.second++;
+  38   1          if (current_time.second >= 60) {
+  39   2              current_time.second = 0;
+  40   2              current_time.minute++;
+  41   2              
+  42   2              if (current_time.minute >= 60) {
+  43   3                  current_time.minute = 0;
+  44   3                  current_time.hour++;
+  45   3                  
+  46   3                  if (current_time.hour >= 24) {
+  47   4                      current_time.hour = 0;
+  48   4                      current_time.day++;
+  49   4                      
+  50   4                      if (current_time.day > get_days_in_month(current_time.month, current_time.year)) {
+  51   5                          current_time.day = 1;
+  52   5                          current_time.month++;
+  53   5                          
+  54   5                          if (current_time.month > 12) {
+C51 COMPILER V9.60.7.0   MAIN                                                              09/18/2026 11:41:45 PAGE 2   
+
+  55   6                              current_time.month = 1;
+  56   6                              current_time.year++;
+  57   6                          }
+  58   5                      }
+  59   4                  }
+  60   3              }
+  61   2          }
+  62   1      }
+  63          
+  64          void update_lcd(void) {
+  65   1          // Line 1: Time: HH:MM:SS
+  66   1          lcd_set_cursor(0, 0);
+  67   1          lcd_write_string("Time: ");
+  68   1          lcd_write_2digit(current_time.hour);
+  69   1          lcd_write_data(':');
+  70   1          lcd_write_2digit(current_time.minute);
+  71   1          lcd_write_data(':');
+  72   1          lcd_write_2digit(current_time.second);
+  73   1      
+  74   1          // Line 2: Date: DD/MM/YYYY
+  75   1          lcd_set_cursor(1, 0);
+  76   1          lcd_write_string("Date: ");
+  77   1          lcd_write_2digit(current_time.day);
+  78   1          lcd_write_data('/');
+  79   1          lcd_write_2digit(current_time.month);
+  80   1          lcd_write_data('/');
+  81   1          lcd_write_4digit(current_time.year);
+  82   1      }
+  83          
+  84          // Timer 0 ISR (Vector 1)
+  85          void timer0_isr(void) interrupt 1 {
+  86   1          // Reload for exact 50ms at 12 MHz
+  87   1          TH0 = 0x3C;
+  88   1          TL0 = 0xB0;
+  89   1          
+  90   1          timer_count++;
+  91   1          if (timer_count >= 20) { // 20 * 50ms = 1 second
+  92   2              timer_count = 0;
+  93   2              second_flag = 1;
+  94   2          }
+  95   1      }
+  96          
+  97          void timer_init(void) {
+  98   1          TMOD &= 0xF0; 
+  99   1          TMOD |= 0x01; // Timer 0, Mode 1 (16-bit)
+ 100   1          
+ 101   1          TH0 = 0x3C;
+ 102   1          TL0 = 0xB0;
+ 103   1          
+ 104   1          ET0 = 1; // Enable Timer 0 Interrupt
+ 105   1          EA  = 1; // Enable Global Interrupts
+ 106   1          TR0 = 1; // Start Timer 0
+ 107   1      }
+ 108          
+ 109          void main(void) {
+ 110   1          lcd_init();
+ 111   1          lcd_write_string("RTC SOFTWARE");
+ 112   1          delay_ms(1000);
+ 113   1          lcd_clear();
+ 114   1          
+ 115   1          update_lcd(); // Initial render
+ 116   1          timer_init();
+C51 COMPILER V9.60.7.0   MAIN                                                              09/18/2026 11:41:45 PAGE 3   
+
+ 117   1      
+ 118   1          while (1) {
+ 119   2              if (second_flag) {
+ 120   3                  second_flag = 0;
+ 121   3                  update_time_structure();
+ 122   3                  update_lcd();
+ 123   3              }
+ 124   2          }
+ 125   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    430    ----
+   CONSTANT SIZE    =     27    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     14    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

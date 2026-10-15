@@ -1,0 +1,60 @@
+#include <reg52.h>
+
+// 74HC138 address pins connected to P2.2, P2.3, P2.4
+sbit LSA = P2^2;
+sbit LSB = P2^3;
+sbit LSC = P2^4;
+
+// Function declarations
+void Timer0_Init(void);
+void Delay_500ms(void);
+
+void main(void) {
+    unsigned char i;
+    
+    // Initialize Timer 0
+    Timer0_Init();
+
+    // Send data to P0 to light up segments (0x3F displays '0', or 0xFF/0x00 for all segments depending on display common pin setup)
+    // Common Anode / Common Cathode segment enable:
+    P0 = 0x3F; // Displays digit '0'
+
+    while (1) {
+        // Sequentially select display LED1 through LED8 (outputs Y0 to Y7 of 74HC138)
+        for (i = 0; i < 8; i++) {
+            // Set 3-to-8 decoder control signals (P2.2, P2.3, P2.4)
+            LSA = (i & 0x01);        // Bit 0 -> P2.2
+            LSB = ((i >> 1) & 0x01); // Bit 1 -> P2.3
+            LSC = ((i >> 2) & 0x01); // Bit 2 -> P2.4
+
+            // Wait 500 ms using Timer 0 delay
+            Delay_500ms();
+        }
+    }
+}
+
+// Timer 0 Initialization (Mode 1: 16-bit Timer)
+void Timer0_Init(void) {
+    TMOD &= 0xF0; // Clear Timer 0 mode bits
+    TMOD |= 0x01; // Set Timer 0 to 16-bit Mode 1
+    TH0 = 0x4C;   // 50ms overflow initial value (50000 counts @ 12MHz crystal)
+    TL0 = 0x00;
+    TR0 = 0;      // Ensure Timer 0 is initially off
+}
+
+// Delay Function using Timer 0 generating 500ms (10 x 50ms)
+void Delay_500ms(void) {
+    unsigned char count;
+
+    for (count = 0; count < 10; count++) {
+        TH0 = 0x4C;  // Reload 50ms timer value
+        TL0 = 0x00;
+        TF0 = 0;     // Clear overflow flag
+        TR0 = 1;     // Start Timer 0
+
+        while (!TF0); // Wait until Timer 0 overflows (50 ms)
+
+        TR0 = 0;     // Stop Timer 0
+        TF0 = 0;     // Clear overflow flag
+    }
+}

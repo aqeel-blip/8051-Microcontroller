@@ -1,0 +1,42 @@
+#include <reg52.h>
+#include <intrins.h>
+
+sbit SERVO_PIN = P2^0;
+
+void delay_10us(unsigned int us_10) {
+    while (us_10--) {
+        _nop_();
+        _nop_();
+    }
+}
+
+void delay_ms(unsigned int ms) {
+    unsigned int i, j;
+    for (i = ms; i > 0; i--) {
+        for (j = 112; j > 0; j--);
+    }
+}
+
+void main(void) {
+    unsigned int i;
+    SERVO_PIN = 0;
+
+    while (1) {
+        // --- Move to 0 Degrees and hold for ~1 second (50 cycles x 20ms = 1000ms) ---
+        for (i = 0; i < 50; i++) {
+            SERVO_PIN = 1;
+            delay_10us(50);      // 0.5 ms HIGH
+            SERVO_PIN = 0;
+            delay_ms(19);        // 19.5 ms LOW total
+            delay_10us(50);
+        }
+
+        // --- Move to 45 Degrees and hold for ~1 second (50 cycles x 20ms = 1000ms) ---
+        for (i = 0; i < 50; i++) {
+            SERVO_PIN = 1;
+            delay_ms(1);          // 1.0 ms HIGH
+            SERVO_PIN = 0;
+            delay_ms(19);         // 19.0 ms LOW
+        }
+    }
+}

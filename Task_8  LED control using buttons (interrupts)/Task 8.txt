@@ -1,0 +1,75 @@
+#include <reg52.h>
+
+// Independent Keys Pin Mapping (A2 Board)
+sbit K1 = P3^1; // Polling (TXD line)
+sbit K2 = P3^0; // Polling (RXD line - filtered against USB noise)
+sbit K3 = P3^2; // INT0 (Hardware Interrupt 0)
+sbit K4 = P3^3; // INT1 (Hardware Interrupt 1)
+
+// LED Pin Mapping
+sbit D1 = P2^0;
+sbit D2 = P2^1;
+sbit D3 = P2^2;
+sbit D4 = P2^3;
+
+// Precise millisecond delay
+void delay_ms(unsigned int ms) {
+    unsigned int i, j;
+    for (i = 0; i < ms; i++)
+        for (j = 0; j < 120; j++);
+}
+
+// --- External Interrupt 0 (Triggered by K3 press) ---
+void External0_ISR(void) interrupt 0 {
+    delay_ms(20);         // Debounce inside ISR
+    if (K3 == 0) {
+        D3 = ~D3;         // Toggle LED D3
+        while (K3 == 0);   // Wait until key release
+    }
+}
+
+// --- External Interrupt 1 (Triggered by K4 press) ---
+void External1_ISR(void) interrupt 2 {
+    delay_ms(20);         // Debounce inside ISR
+    if (K4 == 0) {
+        D4 = ~D4;         // Toggle LED D4
+        while (K4 == 0);   // Wait until key release
+    }
+}
+
+void main(void) {
+    // 1. Initialize LEDs to OFF (Active LOW)
+    D1 = 1; 
+    D2 = 1; 
+    D3 = 1; 
+    D4 = 1;
+
+    // 2. Configure External Interrupts for K3 (INT0) & K4 (INT1)
+    IT0 = 1; // Falling edge trigger for INT0 (P3.2)
+    EX0 = 1; // Enable External Interrupt 0
+
+    IT1 = 1; // Falling edge trigger for INT1 (P3.3)
+    EX1 = 1; // Enable External Interrupt 1
+
+    EA  = 1; // Enable Global Interrupts
+
+    while (1) {
+        // --- Polling K1 -> Controls D1 ---
+        if (K1 == 0) {
+            delay_ms(20);          // Debounce delay
+            if (K1 == 0) {
+                D1 = ~D1;          // Toggle LED D1
+                while (K1 == 0);    // Wait for button release
+            }
+        }
+
+        // --- Polling K2 -> Controls D2 (Filtered for RXD / USB noise) ---
+        if (K2 == 0) {
+            delay_ms(30);          // Longer debounce to filter USB-UART pulses on P3.0
+            if (K2 == 0) {         // Double check button is genuinely held down
+                D2 = ~D2;          // Toggle LED D2
+                while (K2 == 0);    // Wait for complete button release
+            }
+        }
+    }
+}

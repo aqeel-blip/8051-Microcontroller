@@ -1,0 +1,70 @@
+C51 COMPILER V9.60.7.0   EEPROM                                                            08/18/2026 16:18:14 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE EEPROM
+OBJECT MODULE PLACED IN .\Objects\eeprom.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE eeprom.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\ee
+                    -prom.lst) TABS(2) OBJECT(.\Objects\eeprom.obj)
+
+line level    source
+
+   1          #include "eeprom.h"
+   2          
+   3          void EEPROM_WriteByte(uint16_t address, uint8_t dat) {
+   4   1          // Low-level byte write logic (I2C AT24C02 or internal EEPROM SFRs)
+   5   1          (void)address;
+*** WARNING C275 IN LINE 5 OF eeprom.c: expression with possibly no effect
+   6   1          (void)dat;
+*** WARNING C275 IN LINE 6 OF eeprom.c: expression with possibly no effect
+   7   1      }
+   8          
+   9          uint8_t EEPROM_ReadByte(uint16_t address) {
+  10   1          // Low-level byte read logic (I2C AT24C02 or internal EEPROM SFRs)
+  11   1          (void)address;
+*** WARNING C275 IN LINE 11 OF eeprom.c: expression with possibly no effect
+  12   1          return 0x00;
+  13   1      }
+  14          
+  15          // Split 32-bit counter into 4 bytes using shift (>>) and bitwise AND (&)
+  16          void EEPROM_WriteCounter32(uint16_t start_address, uint32_t value) {
+  17   1          uint8_t b0 = (uint8_t)(value & 0xFF);
+  18   1          uint8_t b1 = (uint8_t)((value >> 8) & 0xFF);
+  19   1          uint8_t b2 = (uint8_t)((value >> 16) & 0xFF);
+  20   1          uint8_t b3 = (uint8_t)((value >> 24) & 0xFF);
+  21   1      
+  22   1          EEPROM_WriteByte(start_address,     b0);
+  23   1          EEPROM_WriteByte(start_address + 1, b1);
+  24   1          EEPROM_WriteByte(start_address + 2, b2);
+  25   1          EEPROM_WriteByte(start_address + 3, b3);
+  26   1      }
+  27          
+  28          // Reassemble 4 bytes into a 32-bit counter using shift (<<) and bitwise OR (|)
+  29          uint32_t EEPROM_ReadCounter32(uint16_t start_address) {
+  30   1          uint8_t b0 = EEPROM_ReadByte(start_address);
+  31   1          uint8_t b1 = EEPROM_ReadByte(start_address + 1);
+  32   1          uint8_t b2 = EEPROM_ReadByte(start_address + 2);
+  33   1          uint8_t b3 = EEPROM_ReadByte(start_address + 3);
+  34   1      
+  35   1          uint32_t value = ((uint32_t)b3 << 24) |
+  36   1                           ((uint32_t)b2 << 16) |
+  37   1                           ((uint32_t)b1 << 8)  |
+  38   1                           ((uint32_t)b0);
+  39   1      
+  40   1          return value;
+  41   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    251    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      16
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+C51 COMPILER V9.60.7.0   EEPROM                                                            08/18/2026 16:18:14 PAGE 2   
+
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  3 WARNING(S),  0 ERROR(S)

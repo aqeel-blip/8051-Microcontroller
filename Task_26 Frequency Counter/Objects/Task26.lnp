@@ -1,0 +1,7 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\LCD.obj",
+".\Objects\Freq gene.obj",
+".\Objects\Freq coun.obj" 
+TO ".\Objects\Task26" 
+PRINT(".\Listings\Task26.m51") RAMSIZE(256) 

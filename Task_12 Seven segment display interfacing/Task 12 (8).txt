@@ -1,0 +1,72 @@
+#include <reg52.h>
+
+// Pin definitions for 74HC138 3-to-8 decoder (Digit Selection)
+sbit LSA = P2^2;
+sbit LSB = P2^3;
+sbit LSC = P2^4;
+
+// Common Cathode 7-Segment Lookup Table (0-9)
+unsigned char code segTable[10] = {
+    0x3F, // 0
+    0x06, // 1
+    0x5B, // 2
+    0x4F, // 3
+    0x66, // 4
+    0x6D, // 5
+    0x7D, // 6
+    0x07, // 7
+    0x7F, // 8
+    0x6F  // 9
+};
+
+// Delay routine (~1ms)
+void delay_1ms(void) {
+    unsigned int i, j;
+    for (i = 0; i < 1; i++) {
+        for (j = 0; j < 112; j++);
+    }
+}
+
+// Select display digit via 74HC138 decoder
+void select_digit(unsigned char index) {
+    switch(index) {
+        case 0: LSC = 1; LSB = 1; LSA = 1; break; // Digit 1 (Leftmost)
+        case 1: LSC = 1; LSB = 1; LSA = 0; break; // Digit 2
+        case 2: LSC = 1; LSB = 0; LSA = 1; break; // Digit 3
+        case 3: LSC = 1; LSB = 0; LSA = 0; break; // Digit 4
+        case 4: LSC = 0; LSB = 1; LSA = 1; break; // Digit 5
+        case 5: LSC = 0; LSB = 1; LSA = 0; break; // Digit 6
+        case 6: LSC = 0; LSB = 0; LSA = 1; break; // Digit 7
+        case 7: LSC = 0; LSB = 0; LSA = 0; break; // Digit 8 (Rightmost)
+    }
+}
+
+// Function required by Question 8
+void display_num_7seg(long num) {
+    unsigned char digits[8];
+    char i;
+
+    // 1. Convert the 'long num' into individual digits in real-time
+    for (i = 7; i >= 0; i--) {
+        digits[i] = num % 10;
+        num /= 10;
+    }
+
+    // 2. Refresh each digit once across the 8-position display
+    for (i = 0; i < 8; i++) {
+        select_digit(i);              // Set 74HC138 address pins
+        P0 = segTable[digits[i]];     // Send segment data to Port 0
+        delay_1ms();                  // Hold segment visible
+        P0 = 0x00;                    // Clear Port 0 (prevents ghosting)
+    }
+}
+
+void main(void) {
+    // Example number from Question 8 prompt
+    long num = 42354245;
+
+    while (1) {
+        // Continuously refresh display with converted 'num'
+        display_num_7seg(num);
+    }
+}

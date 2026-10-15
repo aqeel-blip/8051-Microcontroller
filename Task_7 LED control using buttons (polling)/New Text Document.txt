@@ -1,0 +1,66 @@
+#include <reg52.h>
+
+// Independent Buttons
+sbit K1 = P3^1;
+sbit K2 = P3^0;
+sbit K3 = P3^2;
+sbit K4 = P3^3;
+
+// LEDs
+sbit D1 = P2^0;
+sbit D2 = P2^1;
+sbit D3 = P2^2;
+sbit D4 = P2^3;
+
+// Software Delay for Debouncing (~15ms)
+void delay_ms(unsigned int ms) {
+    unsigned int i, j;
+    for (i = 0; i < ms; i++)
+        for (j = 0; j < 120; j++);
+}
+
+void main(void) {
+    // Initialize LEDs to OFF (Active LOW)
+    D1 = 1;
+    D2 = 1;
+    D3 = 1;
+    D4 = 1;
+
+    while (1) {
+        // --- Control K1 -> D1 ---
+        if (K1 == 0) {
+            delay_ms(15);       // Debounce delay
+            if (K1 == 0) {
+                D1 = ~D1;       // Toggle LED D1
+                while (K1 == 0); // Wait for release
+            }
+        }
+
+        // --- Control K2 -> D2 ---
+        if (K2 == 0) {
+            delay_ms(15);       // Debounce delay
+            if (K2 == 0) {
+                D2 = ~D2;       // Toggle LED D2
+                while (K2 == 0); // Wait for release
+            }
+        }
+
+        // --- Control K3 -> D3 ---
+        if (K3 == 0) {
+            delay_ms(15);       // Debounce delay
+            if (K3 == 0) {
+                D3 = ~D3;       // Toggle LED D3
+                while (K3 == 0); // Wait for release
+            }
+        }
+
+        // --- Control K4 -> D4 ---
+        if (K4 == 0) {
+            delay_ms(15);       // Debounce delay
+            if (K4 == 0) {
+                D4 = ~D4;       // Toggle LED D4
+                while (K4 == 0); // Wait for release
+            }
+        }
+    }
+}

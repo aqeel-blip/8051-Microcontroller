@@ -1,0 +1,99 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    08/13/2026  12:33:27  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\Main file (Task 13).obj TO .\Objects\Task 13 PRINT (.\Listings\Task 13.m51) RAMSIZ
+>> E (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\Main file (Task 13).obj (MAIN_FILE__TASK_13_)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  .\Objects\Task 13 (MAIN_FILE__TASK_13_)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     07FDH                  *** GAP ***
+            CODE    0800H     000CH     UNIT         ?C_C51STARTUP
+            CODE    080CH     0005H     UNIT         ?PR?MAIN?MAIN_FILE__TASK_13_
+            CODE    0811H     0003H     UNIT         ?PR?TURN_ON_LED?MAIN_FILE__TASK_13_
+            CODE    0814H     0003H     UNIT         ?PR?TURN_OFF_LED?MAIN_FILE__TASK_13_
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\Task 13 (MAIN_FILE__TASK_13_)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?MAIN_FILE__TASK_13_
+
+?PR?MAIN?MAIN_FILE__TASK_13_
+  +--> ?PR?TURN_ON_LED?MAIN_FILE__TASK_13_
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\Task 13 (MAIN_FILE__TASK_13_)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        MAIN_FILE__TASK_13_
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  C:0814H         PUBLIC        turn_off_led
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/13/2026  12:33:27  PAGE 2
+
+
+  B:00A0H.0       PUBLIC        LED1
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  C:0811H         PUBLIC        turn_on_led
+  C:080CH         PUBLIC        main
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  D:00C8H         PUBLIC        T2CON
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          TURN_ON_LED
+  C:0811H         LINE#         7
+  C:0811H         LINE#         8
+  C:0813H         LINE#         9
+  -------         ENDPROC       TURN_ON_LED
+  -------         PROC          TURN_OFF_LED
+  C:0814H         LINE#         11
+  C:0814H         LINE#         12
+  C:0816H         LINE#         13
+  -------         ENDPROC       TURN_OFF_LED
+  -------         PROC          MAIN
+  C:080CH         LINE#         15
+  C:080CH         LINE#         17
+  C:080FH         LINE#         22
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        MAIN_FILE__TASK_13_
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?TURN_OFF_LED?MAIN_FILE__TASK_13_
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 000BH BYTE ( 0%) *
+******************************************************************************
+
+Program Size: data=9.0 xdata=0 code=26
+LINK/LOCATE RUN COMPLETE.  1 WARNING(S),  0 ERROR(S)

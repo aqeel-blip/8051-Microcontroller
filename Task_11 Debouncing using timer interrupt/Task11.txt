@@ -1,0 +1,66 @@
+#include <reg51.h>
+
+// A2 Board Pin Mapping
+sbit K1  = P3^1;  // Button K1 on P3.1 (0 = Pressed, 1 = Released)
+sbit LED = P2^0;  // LED D1 on P2.0 (Active Low: 0 = ON, 1 = OFF)
+
+// Task 11 State and Counter Variables
+unsigned char k1_btn_state   = 0;
+unsigned char k1_press_cntr   = 0;
+unsigned char k1_release_cntr = 0;
+
+// Timer 0 Initialization: 10 ms interrupt @ 12 MHz
+// 10,000 us -> Reload value = 65536 - 10000 = 55536 (0xD8F0)
+void Timer0_Init(void) {
+    TMOD &= 0xF0;    // Clear Timer 0 mode bits
+    TMOD |= 0x01;    // Set Timer 0 in Mode 1 (16-bit timer)
+    TH0 = 0xD8;      // High byte reload value
+    TL0 = 0xF0;      // Low byte reload value
+    ET0 = 1;         // Enable Timer 0 Interrupt
+    EA  = 1;         // Enable Global Interrupts
+    TR0 = 1;         // Start Timer 0
+}
+
+// 10 ms Timer Interrupt Service Routine
+void Timer0_ISR(void) interrupt 1 {
+    // Reload timer registers for next 10 ms interval
+    TH0 = 0xD8;
+    TL0 = 0xF0;
+
+    // State 0: Detect Continuous Press (100 ms)
+    if (k1_btn_state == 0) {
+        if (K1 == 0) {                 // Button pressed (Active Low on A2 Board)
+            k1_press_cntr++;
+            if (k1_press_cntr >= 10) { // 10 ticks x 10 ms = 100 ms continuous press
+                LED = ~LED;            // Toggle LED state
+                k1_btn_state = 1;      // Switch state to detect release
+                k1_press_cntr = 0;     // Reset press counter
+            }
+        } else {
+            k1_press_cntr = 0;         // Reset if press condition breaks
+        }
+    }
+    // State 1: Detect Continuous Release (100 ms)
+    else if (k1_btn_state == 1) {
+        if (K1 == 1) {                 // Button released
+            k1_release_cntr++;
+            if (k1_release_cntr >= 10) { // 10 ticks x 10 ms = 100 ms continuous release
+                k1_btn_state = 0;      // Reset state to allow next press detection
+                k1_release_cntr = 0;   // Reset release counter
+            }
+        } else {
+            k1_release_cntr = 0;       // Reset if release condition breaks
+        }
+    }
+}
+
+void main(void) {
+    K1  = 1;  // Configure P3.1 as Input
+    LED = 1;  // Turn OFF LED initially (Active Low LED on P2.0)
+    
+    Timer0_Init(); // Start 10 ms interrupt timer
+
+    while (1) {
+        // Main loop
+    }
+}

@@ -1,0 +1,140 @@
+C51 COMPILER V9.60.7.0   DS1302                                                            09/23/2026 12:57:17 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE DS1302
+OBJECT MODULE PLACED IN .\Objects\ds1302.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ds1302.c OPTIMIZE(8,SIZE) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\ds1
+                    -302.lst) TABS(2) OBJECT(.\Objects\ds1302.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "ds1302.h"
+   3          
+   4          sbit DS1302_CLK = P3^6;
+   5          sbit DS1302_IO  = P3^4;
+   6          sbit DS1302_CE  = P3^5;
+   7          
+   8          #define BCD2DEC(b)  ((((b) >> 4) & 0x0F) * 10 + ((b) & 0x0F))
+   9          #define DEC2BCD(d)  ((((d) / 10) << 4) | ((d) % 10))
+  10          
+  11          static void ds1302_wb(unsigned char d) {
+  12   1          unsigned char i;
+  13   1          for (i = 0; i < 8; i++) {
+  14   2              DS1302_IO  = d & 0x01;
+  15   2              DS1302_CLK = 1;
+  16   2              DS1302_CLK = 0;
+  17   2              d >>= 1;
+  18   2          }
+  19   1      }
+  20          
+  21          static unsigned char ds1302_rb(void) {
+  22   1          unsigned char i, d = 0;
+  23   1          DS1302_IO = 1;
+  24   1          for (i = 0; i < 8; i++) {
+  25   2              d >>= 1;
+  26   2              if (DS1302_IO) d |= 0x80;
+  27   2              DS1302_CLK = 1;
+  28   2              DS1302_CLK = 0;
+  29   2          }
+  30   1          return d;
+  31   1      }
+  32          
+  33          static void ds1302_start(void) {
+  34   1          DS1302_CE  = 0;
+  35   1          DS1302_CLK = 0;
+  36   1          DS1302_CE  = 1;
+  37   1      }
+  38          
+  39          static void ds1302_wreg(unsigned char addr, unsigned char dat) {
+  40   1          ds1302_start();
+  41   1          ds1302_wb(addr);
+  42   1          ds1302_wb(dat);
+  43   1          DS1302_CE = 0;
+  44   1      }
+  45          
+  46          void ds1302_init(void) {
+  47   1          EA = 0;
+  48   1          ds1302_wreg(0x8E, 0x00);
+  49   1          ds1302_start();
+  50   1          ds1302_wb(0x81);
+  51   1          if (ds1302_rb() & 0x80)
+  52   1              ds1302_wreg(0x80, 0x00);
+  53   1          DS1302_CE = 0;
+  54   1          EA = 1;
+C51 COMPILER V9.60.7.0   DS1302                                                            09/23/2026 12:57:17 PAGE 2   
+
+  55   1      }
+  56          
+  57          void ds1302_set_time(struct __time *t) {
+  58   1          EA = 0;
+  59   1          ds1302_wreg(0x8E, 0x00);
+  60   1          ds1302_start();
+  61   1          ds1302_wb(0xBE);
+  62   1          ds1302_wb(DEC2BCD(t->second));
+  63   1          ds1302_wb(DEC2BCD(t->minute));
+  64   1          ds1302_wb(DEC2BCD(t->hour));
+  65   1          ds1302_wb(DEC2BCD(t->day));
+  66   1          ds1302_wb(DEC2BCD(t->month));
+  67   1          ds1302_wb(0x01);
+  68   1          ds1302_wb(DEC2BCD(t->year));
+  69   1          ds1302_wb(0x80);
+  70   1          DS1302_CE = 0;
+  71   1          EA = 1;
+  72   1      }
+  73          
+  74          unsigned char ds1302_get_time(struct __time *t) {
+  75   1          unsigned char b0, b1, b2, b3, b4, b5;
+  76   1          unsigned char sec, min, hr, day, mon, yr;
+  77   1      
+  78   1          EA = 0;
+  79   1          ds1302_start();
+  80   1          ds1302_wb(0xBF);
+  81   1          b0 = ds1302_rb();
+  82   1          b1 = ds1302_rb();
+  83   1          b2 = ds1302_rb();
+  84   1          b3 = ds1302_rb();
+  85   1          b4 = ds1302_rb();
+  86   1          b5 = ds1302_rb();
+  87   1          ds1302_rb();
+  88   1          DS1302_CE = 0;
+  89   1          EA = 1;
+  90   1      
+  91   1          if ((b0 & 0x70) > 0x50) return 0;
+  92   1          if ((b1 & 0x70) > 0x50) return 0;
+  93   1          if ((b2 & 0x30) > 0x20) return 0;
+  94   1      
+  95   1          sec = BCD2DEC(b0 & 0x7F);
+  96   1          min = BCD2DEC(b1 & 0x7F);
+  97   1          hr  = BCD2DEC(b2 & 0x3F);
+  98   1          day = BCD2DEC(b3 & 0x3F);
+  99   1          mon = BCD2DEC(b4 & 0x1F);
+ 100   1          yr  = BCD2DEC(b5);
+ 101   1      
+ 102   1          if (sec > 59 || min > 59 || hr > 23) return 0;
+ 103   1          if (day < 1 || day > 31 || mon < 1 || mon > 12) return 0;
+ 104   1      
+ 105   1          t->second = sec;
+ 106   1          t->minute = min;
+ 107   1          t->hour   = hr;
+ 108   1          t->day    = day;
+ 109   1          t->month  = mon;
+ 110   1          t->year   = yr;
+ 111   1          return 1;
+ 112   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    458    ----
+C51 COMPILER V9.60.7.0   DS1302                                                            09/23/2026 12:57:17 PAGE 3   
+
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       7
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

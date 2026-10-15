@@ -1,0 +1,4 @@
+".\Objects\main.obj",
+".\Objects\LCD.obj" 
+TO ".\Objects\practice 2" 
+PRINT(".\Listings\practice 2.m51") RAMSIZE(256) 

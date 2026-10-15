@@ -1,0 +1,99 @@
+C51 COMPILER V9.60.7.0   FREQ_COUN                                                         09/23/2026 15:47:51 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE FREQ_COUN
+OBJECT MODULE PLACED IN .\Objects\Freq coun.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Freq coun.c OPTIMIZE(8,SIZE) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\
+                    -Freq coun.lst) TABS(2) OBJECT(.\Objects\Freq coun.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "Freq gene.h"
+   3          #include "Freq coun.h"
+   4          
+   5          volatile unsigned int period_ticks;
+   6          volatile bit period_ready;
+   7          volatile bit period_ovf;
+   8          volatile bit measuring;
+   9          
+  10          void timer1_isr(void) interrupt 3 {
+  11   1          TR1 = 0;
+  12   1          measuring = 0;
+  13   1          period_ovf = 1;
+  14   1      }
+  15          
+  16          /*
+  17           * 8051 INT0 is falling-edge when IT0=1. For a square wave the period
+  18           * between consecutive edges equals rising-to-rising, so frequency matches.
+  19           */
+  20          void int0_isr(void) interrupt 0 {
+  21   1          unsigned int t;
+  22   1      
+  23   1          if (!measuring) {
+  24   2              TL1 = 0;
+  25   2              TH1 = 0;
+  26   2              TF1 = 0;
+  27   2              TR1 = 1;
+  28   2              measuring = 1;
+  29   2          } else {
+  30   2              TR1 = 0;
+  31   2              t = ((unsigned int)TH1 << 8) | TL1;
+  32   2              TL1 = 0;
+  33   2              TH1 = 0;
+  34   2              TF1 = 0;
+  35   2              TR1 = 1;
+  36   2              period_ticks = t;
+  37   2              period_ready = 1;
+  38   2          }
+  39   1      }
+  40          
+  41          void freq_count_init(void) {
+  42   1          TMOD = (TMOD & 0x0F) | 0x10;   /* Timer 1 mode 1, 16-bit */
+  43   1          TH1 = 0;
+  44   1          TL1 = 0;
+  45   1          IT0 = 1;
+  46   1          PX0 = 1;
+  47   1          EX0 = 1;
+  48   1          ET1 = 1;
+  49   1      }
+  50          
+  51          unsigned char freq_count_poll(unsigned int *hz) {
+  52   1          unsigned int ticks;
+  53   1          unsigned long f;
+  54   1      
+C51 COMPILER V9.60.7.0   FREQ_COUN                                                         09/23/2026 15:47:51 PAGE 2   
+
+  55   1          if (period_ovf) {
+  56   2              period_ovf = 0;
+  57   2              return FREQ_OVF;
+  58   2          }
+  59   1          if (!period_ready)
+  60   1              return FREQ_NONE;
+  61   1      
+  62   1          period_ready = 0;
+  63   1          ticks = period_ticks;
+  64   1          if (ticks < 2)
+  65   1              return FREQ_OVF;
+  66   1      
+  67   1          f = TICK_HZ / ticks;
+  68   1          if (f > 65535UL)
+  69   1              return FREQ_OVF;
+  70   1      
+  71   1          *hz = (unsigned int)f;
+  72   1          return FREQ_OK;
+  73   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    199    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2       7
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      3    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,126 @@
+C51 COMPILER V9.60.7.0   DS1302                                                            08/20/2026 11:29:46 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE DS1302
+OBJECT MODULE PLACED IN .\Objects\ds1302.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ds1302.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\ds
+                    -1302.lst) TABS(2) OBJECT(.\Objects\ds1302.obj)
+
+line level    source
+
+   1          #include "ds1302.h"
+   2          
+   3          // Global time/date variables (read from RTC)
+   4          unsigned char hour, minute, second;
+   5          unsigned char day, month, year;
+   6          
+   7          // ---- Small delay for DS1302 timing (about 5-10 µs) ----
+   8          static void ds1302_delay(void) {
+   9   1          unsigned char i;
+  10   1          for (i = 0; i < 20; i++);
+  11   1      }
+  12          
+  13          // ---- Write one byte (LSB first) ----
+  14          static void DS1302_WriteByte(unsigned char dat) {
+  15   1          unsigned char i;
+  16   1          for (i = 0; i < 8; i++) {
+  17   2              DS1302_IO = dat & 0x01;
+  18   2              ds1302_delay();
+  19   2              DS1302_SCLK = 1;
+  20   2              ds1302_delay();
+  21   2              DS1302_SCLK = 0;
+  22   2              ds1302_delay();
+  23   2              dat >>= 1;
+  24   2          }
+  25   1      }
+  26          
+  27          // ---- Read one byte (LSB first) ----
+  28          static unsigned char DS1302_ReadByte(void) {
+  29   1          unsigned char i, dat = 0;
+  30   1          DS1302_IO = 1;                // release bus
+  31   1          for (i = 0; i < 8; i++) {
+  32   2              dat >>= 1;
+  33   2              if (DS1302_IO) dat |= 0x80;
+  34   2              DS1302_SCLK = 1;
+  35   2              ds1302_delay();
+  36   2              DS1302_SCLK = 0;
+  37   2              ds1302_delay();
+  38   2          }
+  39   1          return dat;
+  40   1      }
+  41          
+  42          // ---- Write to a register ----
+  43          static void DS1302_Write(unsigned char addr, unsigned char dat) {
+  44   1          DS1302_CE = 1;
+  45   1          ds1302_delay();
+  46   1          DS1302_WriteByte(addr);       // address with write bit (0)
+  47   1          DS1302_WriteByte(dat);
+  48   1          DS1302_CE = 0;
+  49   1          ds1302_delay();
+  50   1      }
+  51          
+  52          // ---- Read from a register ----
+  53          static unsigned char DS1302_Read(unsigned char addr) {
+  54   1          unsigned char dat;
+C51 COMPILER V9.60.7.0   DS1302                                                            08/20/2026 11:29:46 PAGE 2   
+
+  55   1          DS1302_CE = 1;
+  56   1          ds1302_delay();
+  57   1          DS1302_WriteByte(addr | 0x01); // address with read bit (1)
+  58   1          dat = DS1302_ReadByte();
+  59   1          DS1302_CE = 0;
+  60   1          ds1302_delay();
+  61   1          return dat;
+  62   1      }
+  63          
+  64          // ---- BCD <-> Binary conversions ----
+  65          static unsigned char BCD_to_Bin(unsigned char bcd) {
+  66   1          return ((bcd >> 4) * 10) + (bcd & 0x0F);
+  67   1      }
+  68          
+  69          static unsigned char Bin_to_BCD(unsigned char bin) {
+  70   1          return ((bin / 10) << 4) | (bin % 10);
+  71   1      }
+  72          
+  73          // ---- Set the DS1302 time and date ----
+  74          void DS1302_Set_Time(unsigned char h, unsigned char m, unsigned char s,
+  75                               unsigned char d, unsigned char mon, unsigned char y) {
+  76   1          // Disable write protection
+  77   1          DS1302_Write(0x8E, 0x00);
+  78   1          
+  79   1          // Write seconds (clear clock halt bit – bit7 = 0)
+  80   1          DS1302_Write(0x80, Bin_to_BCD(s) & 0x7F);
+  81   1          DS1302_Write(0x82, Bin_to_BCD(m));
+  82   1          // Hours: bit6 = 0 => 24-hour mode, bit5 = 0 (no 12/24 flag)
+  83   1          DS1302_Write(0x84, Bin_to_BCD(h) & 0x3F);
+  84   1          DS1302_Write(0x86, Bin_to_BCD(d));
+  85   1          DS1302_Write(0x88, Bin_to_BCD(mon));
+  86   1          DS1302_Write(0x8C, Bin_to_BCD(y));
+  87   1          
+  88   1          // Re-enable write protection
+  89   1          DS1302_Write(0x8E, 0x80);
+  90   1      }
+  91          
+  92          // ---- Read current time and date into global variables ----
+  93          void DS1302_Read_Time(void) {
+  94   1          second = BCD_to_Bin(DS1302_Read(0x81) & 0x7F);   // mask halt bit
+  95   1          minute = BCD_to_Bin(DS1302_Read(0x83));
+  96   1          hour   = BCD_to_Bin(DS1302_Read(0x85) & 0x3F);   // mask 12/24 flags
+  97   1          day    = BCD_to_Bin(DS1302_Read(0x87));
+  98   1          month  = BCD_to_Bin(DS1302_Read(0x89));
+  99   1          year   = BCD_to_Bin(DS1302_Read(0x8D));
+ 100   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    307    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      6       6
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

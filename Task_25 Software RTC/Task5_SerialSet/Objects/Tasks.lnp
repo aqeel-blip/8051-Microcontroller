@@ -1,0 +1,5 @@
+".\Objects\STARTUP.obj",
+".\Objects\lcd.obj",
+".\Objects\main.obj" 
+TO ".\Objects\Tasks" 
+PRINT(".\Listings\Tasks.m51") RAMSIZE(256) 

@@ -1,0 +1,89 @@
+#include <reg52.h>
+
+// 74HC138 Decoder pins for digit selection
+sbit LSA = P2^2;
+sbit LSB = P2^3;
+sbit LSC = P2^4;
+
+// Common Cathode 7-Segment Lookup Table (0-9) without DP
+unsigned char code segTable[10] = {
+    0x3F, // 0
+    0x06, // 1
+    0x5B, // 2
+    0x4F, // 3
+    0x66, // 4
+    0x6D, // 5
+    0x7D, // 6
+    0x07, // 7
+    0x7F, // 8
+    0x6F  // 9
+};
+
+void delay_1ms(void) {
+    unsigned int i, j;
+    for (i = 0; i < 1; i++) {
+        for (j = 0; j < 112; j++);
+    }
+}
+
+void main(void) {
+    // Define 8 variables for the target display "12345678"
+    unsigned char d1 = 1; // Leftmost digit
+    unsigned char d2 = 2;
+    unsigned char d3 = 3;
+    unsigned char d4 = 4;
+    unsigned char d5 = 5;
+    unsigned char d6 = 6;
+    unsigned char d7 = 7;
+    unsigned char d8 = 8; // Rightmost digit
+
+    while (1) {
+        // --- Digit 1 (Leftmost -> 1) ---
+        LSC = 1; LSB = 1; LSA = 1;   // Address 7
+        P0 = segTable[d1];
+        delay_1ms();
+        P0 = 0x00;                   // Blanking to prevent ghosting
+
+        // --- Digit 2 (2) ---
+        LSC = 1; LSB = 1; LSA = 0;   // Address 6
+        P0 = segTable[d2];
+        delay_1ms();
+        P0 = 0x00;
+
+        // --- Digit 3 (3) ---
+        LSC = 1; LSB = 0; LSA = 1;   // Address 5
+        P0 = segTable[d3];
+        delay_1ms();
+        P0 = 0x00;
+
+        // --- Digit 4 (4) ---
+        LSC = 1; LSB = 0; LSA = 0;   // Address 4
+        P0 = segTable[d4];
+        delay_1ms();
+        P0 = 0x00;
+
+        // --- Digit 5 (5) ---
+        LSC = 0; LSB = 1; LSA = 1;   // Address 3
+        P0 = segTable[d5];
+        delay_1ms();
+        P0 = 0x00;
+
+        // --- Digit 6 (6) ---
+        LSC = 0; LSB = 1; LSA = 0;   // Address 2
+        P0 = segTable[d6];
+        delay_1ms();
+        P0 = 0x00;
+
+        // --- Digit 7 (7) ---
+        LSC = 0; LSB = 0; LSA = 1;   // Address 1
+        P0 = segTable[d7];
+        delay_1ms();
+        P0 = 0x00;
+
+        // --- Digit 8 (Rightmost -> 8) ---
+        LSC = 0; LSB = 0; LSA = 0;   // Address 0
+        P0 = segTable[d8];
+        delay_1ms();
+        P0 = 0x00;
+    }
+}

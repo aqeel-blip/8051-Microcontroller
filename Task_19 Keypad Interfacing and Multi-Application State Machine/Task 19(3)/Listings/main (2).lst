@@ -1,0 +1,273 @@
+C51 COMPILER V9.60.7.0   MAIN__2_                                                          08/19/2026 15:23:42 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN__2_
+OBJECT MODULE PLACED IN .\Objects\main (2).obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main (2).c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\
+                    -main (2).lst) TABS(2) OBJECT(.\Objects\main (2).obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          
+   3          // --- Hardware Pin Definitions ---
+   4          // LCD Pins
+   5          #define LCD_DATA P0
+   6          sbit RW = P2^5;
+   7          sbit RS = P2^6;
+   8          sbit EN = P2^7;
+   9          
+  10          // Keypad Pins
+  11          sbit R0 = P1^0; sbit R1 = P1^1; sbit R2 = P1^2; sbit R3 = P1^3;
+  12          sbit C0 = P1^4; sbit C1 = P1^5; sbit C2 = P1^6; sbit C3 = P1^7;
+  13          
+  14          // DS1302 RTC Pins
+  15          sbit RTC_IO  = P3^4;
+  16          sbit RTC_CE  = P3^5;
+  17          sbit RTC_CLK = P3^6;
+  18          
+  19          // DS18B20 Temp Sensor Pin
+  20          sbit DQ = P3^7;
+  21          
+  22          // --- Global Variables ---
+  23          unsigned char current_state = 0; // 0: Calc, 1: RTC, 2: Temp
+  24          
+  25          // --- Utility & LCD Routines ---
+  26          void delay_ms(unsigned int ms) {
+  27   1          unsigned int i, j;
+  28   1          for(i = 0; i < ms; i++)
+  29   1              for(j = 0; j < 112; j++);
+  30   1      }
+  31          
+  32          void lcd_cmd(unsigned char cmd) {
+  33   1          LCD_DATA = cmd; RW = 0; RS = 0; EN = 1;
+  34   1          delay_ms(2); EN = 0;
+  35   1      }
+  36          
+  37          void lcd_char(unsigned char dat) {
+  38   1          LCD_DATA = dat; RW = 0; RS = 1; EN = 1;
+  39   1          delay_ms(2); EN = 0;
+  40   1      }
+  41          
+  42          void lcd_init() {
+  43   1          lcd_cmd(0x38); lcd_cmd(0x0C); lcd_cmd(0x01); lcd_cmd(0x06);
+  44   1      }
+  45          
+  46          void lcd_str(unsigned char *s) {
+  47   1          while(*s) lcd_char(*s++);
+  48   1      }
+  49          
+  50          void lcd_set_cursor(unsigned char r, unsigned char c) {
+  51   1          lcd_cmd((r == 0 ? 0x80 : 0xC0) + c);
+  52   1      }
+  53          
+  54          void lcd_num(int num) {
+C51 COMPILER V9.60.7.0   MAIN__2_                                                          08/19/2026 15:23:42 PAGE 2   
+
+  55   1          if(num < 0) { lcd_char('-'); num = -num; }
+  56   1          if(num / 100) lcd_char((num / 100) + '0');
+  57   1          if(num / 10 || num >= 100) lcd_char(((num / 10) % 10) + '0');
+  58   1          lcd_char((num % 10) + '0');
+  59   1      }
+  60          
+  61          // --- Keypad Functions ---
+  62          char scan_key() {
+  63   1          char k = '\0';
+  64   1          P1 = 0xFF;
+  65   1          
+  66   1          R0=0; R1=1; R2=1; R3=1;
+  67   1          if(!C0) k='+'; if(!C1) k='-'; if(!C2) k='*'; if(!C3) k='/';
+  68   1          
+  69   1          R0=1; R1=0; R2=1; R3=1;
+  70   1          if(!C0) k='='; if(!C1) k='3'; if(!C2) k='6'; if(!C3) k='9';
+  71   1          
+  72   1          R0=1; R1=1; R2=0; R3=1;
+  73   1          if(!C0) k='0'; if(!C1) k='2'; if(!C2) k='5'; if(!C3) k='8';
+  74   1          
+  75   1          R0=1; R1=1; R2=1; R3=0;
+  76   1          if(!C0) k='C'; if(!C1) k='1'; if(!C2) k='4'; if(!C3) k='7';
+  77   1          
+  78   1          if(k != '\0') delay_ms(200); // Key debounce
+  79   1          return k;
+  80   1      }
+  81          
+  82          // --- DS1302 RTC Routines ---
+  83          void rtc_write_byte(unsigned char dat) {
+  84   1          unsigned char i;
+  85   1          for(i=0; i<8; i++) {
+  86   2              RTC_IO = dat & 0x01;
+  87   2              RTC_CLK = 1; RTC_CLK = 0;
+  88   2              dat >>= 1;
+  89   2          }
+  90   1      }
+  91          
+  92          unsigned char rtc_read_byte(unsigned char cmd) {
+  93   1          unsigned char i, dat = 0;
+  94   1          RTC_CE = 1;
+  95   1          rtc_write_byte(cmd);
+  96   1          for(i=0; i<8; i++) {
+  97   2              dat >>= 1;
+  98   2              if(RTC_IO) dat |= 0x80;
+  99   2              RTC_CLK = 1; RTC_CLK = 0;
+ 100   2          }
+ 101   1          RTC_CE = 0;
+ 102   1          return dat;
+ 103   1      }
+ 104          
+ 105          void rtc_write_reg(unsigned char cmd, unsigned char val) {
+ 106   1          RTC_CE = 1; rtc_write_byte(cmd); rtc_write_byte(val); RTC_CE = 0;
+ 107   1      }
+ 108          
+ 109          void rtc_init() {
+ 110   1          RTC_CE = 0; RTC_CLK = 0;
+ 111   1          rtc_write_reg(0x8E, 0x00); // Disable write protect
+ 112   1          rtc_write_reg(0x80, 0x00); // Start clock (Sec=00)
+ 113   1          rtc_write_reg(0x82, 0x30); // Min=30
+ 114   1          rtc_write_reg(0x84, 0x12); // Hour=12
+ 115   1      }
+ 116          
+C51 COMPILER V9.60.7.0   MAIN__2_                                                          08/19/2026 15:23:42 PAGE 3   
+
+ 117          void rtc_display_bcd(unsigned char val) {
+ 118   1          lcd_char(((val >> 4) & 0x0F) + '0');
+ 119   1          lcd_char((val & 0x0F) + '0');
+ 120   1      }
+ 121          
+ 122          void run_rtc_mode() {
+ 123   1          unsigned char h = rtc_read_byte(0x85);
+ 124   1          unsigned char m = rtc_read_byte(0x83);
+ 125   1          unsigned char s = rtc_read_byte(0x81);
+ 126   1          
+ 127   1          lcd_set_cursor(0, 0); lcd_str("RTC CLOCK");
+ 128   1          lcd_set_cursor(1, 0); lcd_str("TIME: ");
+ 129   1          rtc_display_bcd(h); lcd_char(':');
+ 130   1          rtc_display_bcd(m); lcd_char(':');
+ 131   1          rtc_display_bcd(s);
+ 132   1      }
+ 133          
+ 134          // --- DS18B20 Temperature Routines ---
+ 135          void ds18b20_reset() {
+ 136   1          DQ = 1; DQ = 0; delay_ms(1); DQ = 1; delay_ms(1);
+ 137   1      }
+ 138          
+ 139          void ds18b20_write(unsigned char dat) {
+ 140   1          unsigned char i;
+ 141   1          for(i=0; i<8; i++) {
+ 142   2              DQ = 0; DQ = dat & 0x01; delay_ms(1); DQ = 1;
+ 143   2              dat >>= 1;
+ 144   2          }
+ 145   1      }
+ 146          
+ 147          unsigned char ds18b20_read() {
+ 148   1          unsigned char i, dat = 0;
+ 149   1          for(i=0; i<8; i++) {
+ 150   2              DQ = 0; dat >>= 1; DQ = 1;
+ 151   2              if(DQ) dat |= 0x80;
+ 152   2              delay_ms(1);
+ 153   2          }
+ 154   1          return dat;
+ 155   1      }
+ 156          
+ 157          void run_temp_mode() {
+ 158   1          unsigned char lsb, msb;
+ 159   1          int temp;
+ 160   1          
+ 161   1          ds18b20_reset();
+ 162   1          ds18b20_write(0xCC); // Skip ROM
+ 163   1          ds18b20_write(0x44); // Convert Temp
+ 164   1          
+ 165   1          ds18b20_reset();
+ 166   1          ds18b20_write(0xCC);
+ 167   1          ds18b20_write(0xBE); // Read Scratchpad
+ 168   1          
+ 169   1          lsb = ds18b20_read();
+ 170   1          msb = ds18b20_read();
+ 171   1          temp = (msb << 8) | lsb;
+ 172   1          temp = temp >> 4; // Convert to Celsius
+ 173   1          
+ 174   1          lcd_set_cursor(0, 0); lcd_str("TEMP MONITOR");
+ 175   1          lcd_set_cursor(1, 0); lcd_str("TEMP: ");
+ 176   1          lcd_num(temp); lcd_str(" C  ");
+ 177   1      }
+ 178          
+C51 COMPILER V9.60.7.0   MAIN__2_                                                          08/19/2026 15:23:42 PAGE 4   
+
+ 179          // --- Calculator App ---
+ 180          void run_calc_mode(char key) {
+ 181   1          static int num1 = 0, num2 = 0;
+ 182   1          static char op = 0;
+ 183   1          static unsigned char step = 0;
+ 184   1          
+ 185   1          if(step == 0) {
+ 186   2              lcd_set_cursor(0, 0); lcd_str("CALCULATOR");
+ 187   2              lcd_set_cursor(1, 0); lcd_str("Ready...        ");
+ 188   2              num1 = 0; num2 = 0; op = 0; step = 1;
+ 189   2          }
+ 190   1          
+ 191   1          if(key >= '0' && key <= '9') {
+ 192   2              if(op == 0) {
+ 193   3                  num1 = (num1 * 10) + (key - '0');
+ 194   3                  lcd_set_cursor(1, 0); lcd_num(num1);
+ 195   3              } else {
+ 196   3                  num2 = (num2 * 10) + (key - '0');
+ 197   3                  lcd_set_cursor(1, 5); lcd_num(num2);
+ 198   3              }
+ 199   2          } else if(key == '+' || key == '-' || key == '*' || key == '/') {
+ 200   2              op = key;
+ 201   2              lcd_set_cursor(1, 4); lcd_char(op);
+ 202   2          } else if(key == '=') {
+ 203   2              int res = 0;
+ 204   2              if(op == '+') res = num1 + num2;
+ 205   2              if(op == '-') res = num1 - num2;
+ 206   2              if(op == '*') res = num1 * num2;
+ 207   2              if(op == '/' && num2 != 0) res = num1 / num2;
+ 208   2              
+ 209   2              lcd_set_cursor(1, 8); lcd_char('=');
+ 210   2              lcd_num(res);
+ 211   2              step = 0; // Reset after equals
+ 212   2          }
+ 213   1      }
+ 214          
+ 215          // --- Main Application Loop ---
+ 216          void main() {
+ 217   1          char key;
+ 218   1          lcd_init();
+ 219   1          rtc_init();
+ 220   1          lcd_cmd(0x01);
+ 221   1          
+ 222   1          while(1) {
+ 223   2              key = scan_key();
+ 224   2              
+ 225   2              // App Switcher: 'C' key cycles between apps
+ 226   2              if(key == 'C') {
+ 227   3                  current_state = (current_state + 1) % 3;
+ 228   3                  lcd_cmd(0x01); // Clear display on state change
+ 229   3                  delay_ms(100);
+ 230   3                  continue;
+ 231   3              }
+ 232   2              
+ 233   2              // State Machine Execution
+ 234   2              switch(current_state) {
+ 235   3                  case 0: run_calc_mode(key); break;
+ 236   3                  case 1: run_rtc_mode();     break;
+ 237   3                  case 2: run_temp_mode();    break;
+ 238   3              }
+ 239   2              delay_ms(100);
+ 240   2          }
+C51 COMPILER V9.60.7.0   MAIN__2_                                                          08/19/2026 15:23:42 PAGE 5   
+
+ 241   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1137    ----
+   CONSTANT SIZE    =     70    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      7      17
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

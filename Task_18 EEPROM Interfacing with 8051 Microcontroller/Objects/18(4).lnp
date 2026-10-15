@@ -1,0 +1,5 @@
+".\Objects\eeprom.obj",
+".\Objects\lcd1602.obj",
+".\Objects\main.obj" 
+TO ".\Objects\18(4)" 
+PRINT(".\Listings\18(4).m51") RAMSIZE(256) 

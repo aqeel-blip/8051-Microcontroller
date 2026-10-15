@@ -1,0 +1,58 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: µVision V5.38.0.0
+Copyright (C) 2022 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: Aqeel Ahmad, CSTEV, LIC=----
+ 
+Tool Versions:
+Toolchain:       PK51 Prof. Develpers Kit  Version: 9.60.7.0
+Toolchain Path:  C:\Keil_v5\C51\BIN
+C Compiler:      C51.exe V9.60.7.0
+Assembler:       A51.exe V8.2.7.0
+Linker/Locator:  BL51.exe V6.22.4.0
+Library Manager: LIB51.exe V4.30.1.0
+Hex Converter:   OH51.exe V2.7.0.0
+CPU DLL:         S8051.DLL V3.125.1.0
+Dialog DLL:      DP51.DLL V2.69.0.0 
+<h2>Project:</h2>
+C:\Users\HP\Desktop\Internship\Task 19\Task 19(3)\temp_cal_rtc.uvproj
+Project File Date:  08/19/2026
+
+<h2>Output:</h2>
+Build target 'Target 1'
+linking...
+BL51 BANKED LINKER/LOCATER V6.22.4.0 - SN: Eval Version
+COPYRIGHT (C) 1987-2021, Arm Limited or its Affiliates. All rights reserved.
+".\Objects\main.obj",
+".\Objects\main (2).obj",
+".\Objects\CALCULATOR.obj",
+".\Objects\LCD.obj",
+".\Objects\7sd.obj",
+".\Objects\mainstate.obj",
+".\Objects\TEMP.obj" 
+TO ".\Objects\temp_cal_rtc" 
+PRINT(".\Listings\temp_cal_rtc.m51") RAMSIZE(256) 
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?_LCD_STRING?LCD
+    CALLER1: ?PR?TIMER0_INTERUPT?TEMP
+    CALLER2: ?C_C51STARTUP
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0994H BYTE (119%) *
+******************************************************************************
+Program Size: data=107.0 xdata=0 code=3265
+LINK/LOCATE RUN COMPLETE.  1 WARNING(S),  0 ERROR(S)
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?_LCD_STRING?LCD
+    CALLER1: ?PR?TIMER0_INTERUPT?TEMP
+    CALLER2: ?C_C51STARTUP
+*** FATAL ERROR L250: CODE SIZE LIMIT IN RESTRICTED VERSION EXCEEDED
+    MODULE:  C:\KEIL_V5\C51\LIB\C51S.LIB (-----)
+    LIMIT:   0800H BYTES
+Target not created.
+Build Time Elapsed:  00:00:00
+</pre>
+</body>
+</html>

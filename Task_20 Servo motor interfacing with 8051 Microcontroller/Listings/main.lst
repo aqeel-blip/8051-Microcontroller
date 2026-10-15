@@ -1,0 +1,84 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              08/24/2026 11:28:41 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          
+   3          sbit SERVO_PIN = P1^0; // Connected to P10 pin header[cite: 1]
+   4          
+   5          volatile unsigned int pwm_count = 0;
+   6          volatile unsigned int duty_cycle = 5; // Default 0.5 ms high pulse (0 deg)[cite: 2]
+   7          
+   8          // Timer 0 Interrupt Service Routine (Fires every 100 us)[cite: 2]
+   9          void Timer0_ISR(void) interrupt 1 {
+  10   1          // Reload registers for 100 us tick @ 11.0592 MHz crystal[cite: 1]
+  11   1          TH0 = 0xFF;
+  12   1          TL0 = 0xA7;
+  13   1      
+  14   1          pwm_count++;
+  15   1      
+  16   1          // Pulse state toggle
+  17   1          if (pwm_count < duty_cycle) {
+  18   2              SERVO_PIN = 1;
+  19   2          } else {
+  20   2              SERVO_PIN = 0;
+  21   2          }
+  22   1      
+  23   1          // Reset counter after 200 ticks (200 * 100 us = 20 ms period / 50 Hz)[cite: 2]
+  24   1          if (pwm_count >= 200) {
+  25   2              pwm_count = 0;
+  26   2          }
+  27   1      }
+  28          
+  29          void delay_ms(unsigned int ms) {
+  30   1          unsigned int i, j;
+  31   1          for (i = 0; i < ms; i++)
+  32   1              for (j = 0; j < 114; j++);
+  33   1      }
+  34          
+  35          void main(void) {
+  36   1          // Configure Timer 0 in 16-bit Mode 1
+  37   1          TMOD &= 0xF0;
+  38   1          TMOD |= 0x01;
+  39   1      
+  40   1          TH0 = 0xFF;
+  41   1          TL0 = 0xA7;
+  42   1      
+  43   1          ET0 = 1; // Enable Timer 0 Interrupt
+  44   1          EA  = 1; // Enable Global Interrupts
+  45   1          TR0 = 1; // Start Timer 0
+  46   1      
+  47   1          while (1) {
+  48   2              // Sweep 0 deg (duty=5 -> 0.5 ms) to 180 deg (duty=25 -> 2.5 ms)[cite: 2]
+  49   2              for (duty_cycle = 5; duty_cycle <= 25; duty_cycle++) {
+  50   3                  delay_ms(80); // Step delay allowing shaft time to complete movement
+  51   3              }
+  52   2      
+  53   2              // Sweep 180 deg (duty=25) back to 0 deg (duty=5)[cite: 2]
+  54   2              for (duty_cycle = 25; duty_cycle >= 5; duty_cycle--) {
+C51 COMPILER V9.60.7.0   MAIN                                                              08/24/2026 11:28:41 PAGE 2   
+
+  55   3                  delay_ms(80);
+  56   3              }
+  57   2          }
+  58   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    173    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      4    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
