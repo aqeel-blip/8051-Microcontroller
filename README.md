@@ -106,10 +106,6 @@ To run any task:
 2. Use the Keil IDE or your preferred toolchain to compile and upload the code to the STC89C52 microcontroller.
 3. Refer to the task description for instructions on testing and verification.
 
-## License
+## Videos
 
-This project is for educational purposes and follows the instructions provided in the STC89C52 training manual.
-
----
-
-This includes the new **Task 19** while keeping the original structure intact as requested.
+Task videos are available here: [Download videos](https://github.com/aqeel-blip/8051-Microcontroller/releases/tag/videos)
