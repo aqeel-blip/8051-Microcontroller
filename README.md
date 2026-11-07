@@ -73,6 +73,65 @@ This repository contains the completed tasks from the STC89C52 training manual, 
    - Implemented non-blocking debounce for the keypad.
    - Organized the code into separate files for each application (`calculator.c`, `RTC.c`, `temp_monitor.c`).
 
+
+### 20. **Servo Motor Interfacing**
+
+- Generated the 50 Hz PWM signal for the SG90 servo, first with a delay loop and then with a timer interrupt for accurate timing.
+- Controlled the angle (0-180 degrees) with keys K1 and K2.
+- Displayed the servo position on the display and checked the PWM with a logic analyzer.
+
+### 21. **Digital Door Lock**
+
+- Built a keypad door lock with an LCD for status messages and a servo that unlocks the door for 5 seconds.
+- Generated a random 6-digit default password on first run, sent it to the serial port and saved it to EEPROM.
+- Counted wrong attempts (saved in EEPROM), beeped the buzzer, and disabled the door after 5 wrong attempts.
+- Added a password change mode (long press ON/C for 10 seconds) that asks for the old password first.
+- Implemented the logic as a state machine with `switch case`.
+
+### 22. **External ADC Interfacing**
+
+- Wrote a driver for the external ET2046 ADC.
+- Built a digital voltmeter (0-5 V) using the potentiometer and checked it against a multimeter.
+- Read the thermistor for temperature and the LDR for relative light intensity (0-100), all shown on the LCD.
+- Built an automatic AC controller that works only in daytime (ON above 29 °C, OFF below 26 °C).
+- Built a temperature alert with a set point from the potentiometer and a buzzer.
+- Built a solar load management controller that disconnects the heavy load when mains fails at night.
+
+### 23. **DAC Interfacing (DC Voltage Using PWM)**
+
+- Wrote a function that takes 0-100 and generates a PWM signal on pin P21.
+- Used the on-board low pass filter to turn the PWM into a 0-5 V DC voltage.
+- Read the DAC output back through the ADC and displayed it on the LCD.
+- Built a basic DC power supply using K1 and K2 to change the duty cycle.
+
+### 24. **Application: Microwave Oven Timer**
+
+- Built a microwave oven timer with time entry on the 4x4 keypad and status on the 16x2 LCD.
+- Used ON to start or pause, = to clear, a safety door switch to stop the oven, and a relay to control the magnetron.
+- Used a buzzer for key presses, warnings and time out.
+- Implemented the program as a finite state machine.
+
+### 25. **Software RTC**
+
+- Built a software real-time clock using a one-second timer interrupt and a time structure (second to year).
+- Handled rollovers for minutes, hours, days, months, years and leap-year February.
+- Displayed the time on the LCD without flickering and set it from the PC over the serial port.
+- Showed software RTC and DS1302 time together on the LCD to compare their accuracy.
+
+### 26. **Frequency Counter**
+
+- Measured the frequency of a square wave using the external interrupt (INT0) and a 16-bit timer.
+- Started the timer on one rising edge and stopped it on the next to calculate frequency.
+- Showed an error message when the timer overflowed on very slow signals.
+- Displayed the measured frequency on the seven-segment display.
+
+### 27. **Servo Motor Controller**
+
+- Moved the servo arm to an angle (0-180 degrees) entered on the 4x4 keypad.
+- Showed the current angle and the new angle being typed on the 16x2 LCD.
+- Gave a short beep for each key press and a long beep for an invalid angle.
+- Used timer interrupts and flags for the beeps, so the code never blocks.
+
 ## Project Structure
 
 Each task is stored in a separate folder, organized as follows:
