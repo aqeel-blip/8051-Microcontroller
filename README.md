@@ -129,7 +129,6 @@ This repository contains the completed tasks from the STC89C52 training manual, 
 
 - Moved the servo arm to an angle (0-180 degrees) entered on the 4x4 keypad.
 - Showed the current angle and the new angle being typed on the 16x2 LCD.
-- Gave a short beep for each key press and a long beep for an invalid angle.
 - Used timer interrupts and flags for the beeps, so the code never blocks.
 
 ## Project Structure
