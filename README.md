@@ -78,7 +78,6 @@ This repository contains the completed tasks from the STC89C52 training manual, 
 Each task is stored in a separate folder, organized as follows:
 
 ```
-.
 ├── Task 1 - Setup
 ├── Task 2 - Logic Analyzer
 ├── Task 3 - LED Blinking
@@ -94,7 +93,18 @@ Each task is stored in a separate folder, organized as follows:
 ├── Task 13 - File Organization
 ├── Task 14 - LCD Interfacing
 ├── Task 15 - Serial Port Programming
-└── Task 19 - Keypad Interfacing and Multi-Application State Machine
+├── Task 16 - DS1302 RTC Interfacing
+├── Task 17 - (add title)
+├── Task 18 - EEPROM Interfacing
+├── Task 19 - Keypad Interfacing and Multi-Application State Machine
+├── Task 20 - Servo Motor Interfacing
+├── Task 21 - Digital Door Lock
+├── Task 22 - External ADC Interfacing
+├── Task 23 - DAC Interfacing (DC Voltage using PWM)
+├── Task 24 - Application: Microwave Oven Timer
+├── Task 25 - Software RTC
+├── Task 26 - Frequency Counter
+└── Task 27 - Servo Motor
 ```
 
 ## Getting Started
